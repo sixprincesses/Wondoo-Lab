@@ -3,8 +3,12 @@ package com.wondoo.memberservice.member.client.github;
 import com.wondoo.memberservice.member.client.github.data.request.GithubTokenRequest;
 import com.wondoo.memberservice.member.client.github.data.response.GithubCodeResponse;
 import com.wondoo.memberservice.member.client.github.data.response.GithubTokenResponse;
+import com.wondoo.memberservice.member.client.github.data.response.GithubUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,5 +44,25 @@ public class GithubClient {
                 githubTokenRequest,
                 GithubTokenResponse.class
         );
+    }
+
+    /**
+     * Github에 등록된 사용자 정보 반환
+     * @param githubTokenResponse
+     * @return 사용자의 id와 login 정보
+     */
+    public GithubUserInfoResponse getUserInfo(GithubTokenResponse githubTokenResponse) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + githubTokenResponse.accessToken());
+
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+        return restTemplate.exchange(
+                "https://api.github.com/user",
+                HttpMethod.GET,
+                entity,
+                GithubUserInfoResponse.class
+        ).getBody();
     }
 }
