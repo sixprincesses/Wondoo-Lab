@@ -48,7 +48,8 @@ public class GithubClient {
 
     /**
      * Github에 등록된 사용자 정보 반환
-     * @param githubTokenResponse
+     *
+     * @param githubTokenResponse Github access_token
      * @return 사용자의 id와 login 정보
      */
     public GithubUserInfoResponse getUserInfo(GithubTokenResponse githubTokenResponse) {

@@ -4,6 +4,7 @@ import com.wondoo.memberservice.member.client.github.GithubClient;
 import com.wondoo.memberservice.member.client.github.data.response.GithubCodeResponse;
 import com.wondoo.memberservice.member.client.github.data.response.GithubTokenResponse;
 import com.wondoo.memberservice.member.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.member.service.MemberSaveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final GithubClient githubClient;
+    private final MemberSaveService memberSaveService;
 
     @PostMapping("/member/login")
     public ResponseEntity<String> memberLogin(@RequestBody @Valid GithubCodeResponse githubCodeResponse){
 
         GithubTokenResponse githubTokenResponse = githubClient.getAccessToken(githubCodeResponse);
-        GithubUserInfoResponse githubClientUserInfo = githubClient.getUserInfo(githubTokenResponse);
+        GithubUserInfoResponse githubUserInfoResponse = githubClient.getUserInfo(githubTokenResponse);
 
-        return ResponseEntity.ok("success");
+        return memberSaveService.memberSave(githubUserInfoResponse);
     }
 }
