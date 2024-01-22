@@ -1,5 +1,6 @@
 package com.wondoo.memberservice.member.controller;
 
+import com.wondoo.memberservice.auth.data.response.TokenMarker;
 import com.wondoo.memberservice.member.client.github.GithubClient;
 import com.wondoo.memberservice.member.client.github.data.response.GithubCodeResponse;
 import com.wondoo.memberservice.member.client.github.data.response.GithubTokenResponse;
@@ -22,7 +23,7 @@ public class MemberController {
     private final MemberSaveService memberSaveService;
 
     @PostMapping("/member/login")
-    public ResponseEntity<String> memberLogin(@RequestBody @Valid GithubCodeResponse githubCodeResponse){
+    public ResponseEntity<TokenMarker> memberLogin(@RequestBody @Valid GithubCodeResponse githubCodeResponse){
 
         GithubTokenResponse githubTokenResponse = githubClient.getAccessToken(githubCodeResponse);
         GithubUserInfoResponse githubUserInfoResponse = githubClient.getUserInfo(githubTokenResponse);
