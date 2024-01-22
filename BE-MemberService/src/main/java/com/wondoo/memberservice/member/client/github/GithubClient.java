@@ -19,8 +19,15 @@ public class GithubClient {
     @Value("${github.client_secret}")
     private String clientSecret;
 
-    // Github에 등록된 사용자 정보를 가져오기 위한 access_token 요청
-    public GithubTokenResponse getAccessToken(GithubCodeResponse githubCodeResponse){
+
+    /**
+     * Github 에 등록된 사용자 정보를 가져오기 위한 access_token 요청
+     *
+     * @param githubCodeResponse OAuth Callback Code
+     * @return 사용자의 access_token
+     */
+
+    public GithubTokenResponse getAccessToken(GithubCodeResponse githubCodeResponse) {
 
         GithubTokenRequest githubTokenRequest = GithubTokenRequest.builder()
                 .clientId(clientId)
