@@ -42,26 +42,23 @@ public class MemberService implements MemberSaveService {
                     .socialNickname(githubUserInfoResponse.socialNickname())
                     .build());
 
-            LoginTokenResponse loginTokenResponse = tokenProvider.jwtSave(MemberTokenRequest.builder()
+            TokenMarker tokenMarker = tokenProvider.jwtSave(MemberTokenRequest.builder()
+                    .memberId(member.getId())
                     .socialId(member.getSocialId())
                     .build());
-            SignupTokenResponse signupTokenResponse = SignupTokenResponse.builder()
-                    .memberId(member.getId())
-                    .accessToken(loginTokenResponse.getAccessToken())
-                    .refreshToken(loginTokenResponse.getRefreshToken())
-                    .build();
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(signupTokenResponse);
+            return ResponseEntity.status(HttpStatus.CREATED).body(tokenMarker);
         }
 
         // Github Nickname 을 변경했으면 반영
         if (!githubUserInfoResponse.socialNickname().equals(tmpMember.get().getSocialNickname())) {
             tmpMember.get().updateSocialNickname(githubUserInfoResponse.socialNickname());
         }
-        LoginTokenResponse loginTokenResponse = tokenProvider.jwtSave(MemberTokenRequest.builder()
+
+        TokenMarker tokenMarker = tokenProvider.jwtSave(MemberTokenRequest.builder()
                 .socialId(tmpMember.get().getSocialId())
                 .build());
 
-        return ResponseEntity.status(HttpStatus.OK).body(loginTokenResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
     }
 }

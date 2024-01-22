@@ -3,6 +3,7 @@ package com.wondoo.memberservice.auth.utils;
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
 import com.wondoo.memberservice.auth.data.response.LoginTokenResponse;
 import com.wondoo.memberservice.auth.data.response.SignupTokenResponse;
+import com.wondoo.memberservice.auth.data.response.TokenMarker;
 import com.wondoo.memberservice.auth.domain.RefreshToken;
 import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -37,7 +38,7 @@ public class TokenProvider {
      * @param memberTokenRequest social_id를 claim 으로 등록
      * @return access_token 및 refresh_token
      */
-    public LoginTokenResponse jwtSave(MemberTokenRequest memberTokenRequest){
+    public TokenMarker jwtSave(MemberTokenRequest memberTokenRequest){
 
         Claims claims = Jwts.claims()
                 .setSubject(String.valueOf(memberTokenRequest.socialId()));
@@ -66,6 +67,13 @@ public class TokenProvider {
                 .refreshToken(refreshToken)
                 .build());
 
+        if (memberTokenRequest.memberId() != null){
+            return SignupTokenResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .memberId(memberTokenRequest.memberId())
+                    .build();
+        }
         return LoginTokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
