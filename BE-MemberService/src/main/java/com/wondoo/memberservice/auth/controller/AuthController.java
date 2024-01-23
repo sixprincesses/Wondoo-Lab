@@ -2,10 +2,10 @@ package com.wondoo.memberservice.auth.controller;
 
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
 import com.wondoo.memberservice.auth.service.AuthService;
-import com.wondoo.memberservice.member.client.github.GithubClient;
-import com.wondoo.memberservice.member.client.github.data.response.GithubCodeResponse;
-import com.wondoo.memberservice.member.client.github.data.response.GithubTokenResponse;
-import com.wondoo.memberservice.member.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.auth.client.github.GithubClient;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubCodeResponse;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubTokenResponse;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -2,9 +2,8 @@ package com.wondoo.memberservice.auth.service;
 
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
-import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
 import com.wondoo.memberservice.auth.utils.TokenProvider;
-import com.wondoo.memberservice.member.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
