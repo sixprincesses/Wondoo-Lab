@@ -1,4 +1,4 @@
-package com.wondoo.memberservice.global;
+package com.wondoo.memberservice.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
