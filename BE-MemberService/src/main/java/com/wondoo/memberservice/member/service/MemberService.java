@@ -51,7 +51,7 @@ public class MemberService implements MemberSaveService {
         }
 
         // Github Nickname 을 변경했으면 반영
-        if (!githubUserInfoResponse.socialNickname().equals(tmpMember.get().getSocialNickname())) {
+        if (isDifferentPreSocialNickname(githubUserInfoResponse, tmpMember)) {
             tmpMember.get().updateSocialNickname(githubUserInfoResponse.socialNickname());
         }
 
@@ -60,5 +60,9 @@ public class MemberService implements MemberSaveService {
                 .build());
 
         return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
+    }
+
+    private boolean isDifferentPreSocialNickname(GithubUserInfoResponse githubUserInfoResponse, Optional<Member> tmpMember) {
+        return !githubUserInfoResponse.socialNickname().equals(tmpMember.get().getSocialNickname());
     }
 }
