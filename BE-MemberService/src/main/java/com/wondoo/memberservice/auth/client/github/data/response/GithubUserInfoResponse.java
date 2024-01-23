@@ -1,4 +1,4 @@
-package com.wondoo.memberservice.member.client.github.data.response;
+package com.wondoo.memberservice.auth.client.github.data.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

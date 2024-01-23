@@ -1,9 +1,9 @@
-package com.wondoo.memberservice.member.client.github;
+package com.wondoo.memberservice.auth.client.github;
 
-import com.wondoo.memberservice.member.client.github.data.request.GithubTokenRequest;
-import com.wondoo.memberservice.member.client.github.data.response.GithubCodeResponse;
-import com.wondoo.memberservice.member.client.github.data.response.GithubTokenResponse;
-import com.wondoo.memberservice.member.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.auth.client.github.data.request.GithubTokenRequest;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubCodeResponse;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubTokenResponse;
+import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
