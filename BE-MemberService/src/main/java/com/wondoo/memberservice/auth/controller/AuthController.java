@@ -7,7 +7,6 @@ import com.wondoo.memberservice.auth.client.github.GithubClient;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubCodeResponse;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubTokenResponse;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
-import com.wondoo.memberservice.global.data.request.MemberValidRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +37,7 @@ public class AuthController {
             @RequestBody @Valid MemberLogoutRequest memberLogoutRequest
     ) {
 
-        authService.memberLogout(MemberValidRequest.builder()
-                .socialId(socialId)
-                .build(), memberLogoutRequest);
+        authService.memberLogout(socialId, memberLogoutRequest);
 
         return ResponseEntity.ok("Logout Success");
     }

@@ -9,8 +9,6 @@ import com.wondoo.memberservice.auth.exception.AuthException;
 import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
 import com.wondoo.memberservice.auth.utils.TokenProvider;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
-import com.wondoo.memberservice.global.data.request.MemberValidRequest;
-import com.wondoo.memberservice.global.exception.ErrorCode;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,11 +62,11 @@ public class AuthService {
 
     @Transactional
     public void memberLogout(
-            MemberValidRequest memberValidRequest,
+            Long socialId,
             MemberLogoutRequest memberLogoutRequest
     ) {
 
-        RefreshToken refreshToken = refreshTokenRepository.findById(memberValidRequest.socialId())
+        RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
                 .orElseThrow(
                         () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
                 );
