@@ -7,15 +7,15 @@ import com.wondoo.memberservice.auth.client.github.GithubClient;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubCodeResponse;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubTokenResponse;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.global.annotation.RestWondooController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestWondooController
 @RequiredArgsConstructor
 public class AuthController {
 
