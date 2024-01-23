@@ -5,6 +5,4 @@ import com.wondoo.memberservice.member.client.github.data.response.GithubUserInf
 import org.springframework.http.ResponseEntity;
 
 public interface MemberSaveService {
-
-    ResponseEntity<TokenMarker> memberSave(GithubUserInfoResponse githubUserInfoResponse);
 }
