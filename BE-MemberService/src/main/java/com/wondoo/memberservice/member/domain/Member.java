@@ -24,6 +24,21 @@ public class Member {
     @Column(name = "social_nickname", nullable = false)
     private String socialNickname;
 
+    @Column(name = "image_id")
+    private Long imageId;
+
+    @Column(name = "nickname")
+    private String nickname;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "gender")
+    private String gender;
+
     @Builder
     public Member(Long socialId, String socialNickname) {
         this.socialId = socialId;
