@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SignupTokenResponse extends TokenMarker{
+public class SignupTokenResponse extends TokenMarker {
 
-        @JsonProperty("member_id")
-        private Long memberId;
+    @JsonProperty("member_id")
+    private Long memberId;
 
-        @Builder
-        public SignupTokenResponse(Long memberId, String accessToken, String refreshToken) {
-                this.memberId = memberId;
-                this.accessToken = accessToken;
-                this.refreshToken = refreshToken;
-        }
+    @Builder
+    public SignupTokenResponse(Long memberId, String accessToken, String refreshToken) {
+        this.memberId = memberId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }

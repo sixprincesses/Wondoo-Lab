@@ -30,7 +30,7 @@ public class Member {
         this.socialNickname = socialNickname;
     }
 
-    public void updateSocialNickname(String socialNickname){
+    public void updateSocialNickname(String socialNickname) {
         this.socialNickname = socialNickname;
     }
 }

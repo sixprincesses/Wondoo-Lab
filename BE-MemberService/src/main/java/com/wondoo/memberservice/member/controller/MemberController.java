@@ -23,7 +23,7 @@ public class MemberController {
     private final MemberSaveService memberSaveService;
 
     @PostMapping("/member/login")
-    public ResponseEntity<TokenMarker> memberLogin(@RequestBody @Valid GithubCodeResponse githubCodeResponse){
+    public ResponseEntity<TokenMarker> memberLogin(@RequestBody @Valid GithubCodeResponse githubCodeResponse) {
 
         GithubTokenResponse githubTokenResponse = githubClient.getAccessToken(githubCodeResponse);
         GithubUserInfoResponse githubUserInfoResponse = githubClient.getUserInfo(githubTokenResponse);

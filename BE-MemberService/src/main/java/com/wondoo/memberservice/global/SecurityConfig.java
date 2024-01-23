@@ -9,11 +9,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
-    protected SecurityFilterChain config(HttpSecurity http) throws Exception{
+    protected SecurityFilterChain config(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagementConfigurer ->

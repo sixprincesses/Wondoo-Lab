@@ -35,10 +35,11 @@ public class TokenProvider {
 
     /**
      * JWT 발급 및 Redis 백업
+     *
      * @param memberTokenRequest social_id를 claim 으로 등록
      * @return access_token 및 refresh_token
      */
-    public TokenMarker jwtSave(MemberTokenRequest memberTokenRequest){
+    public TokenMarker jwtSave(MemberTokenRequest memberTokenRequest) {
 
         Claims claims = Jwts.claims()
                 .setSubject(String.valueOf(memberTokenRequest.socialId()));
@@ -67,7 +68,7 @@ public class TokenProvider {
                 .refreshToken(refreshToken)
                 .build());
 
-        if (memberTokenRequest.memberId() != null){
+        if (memberTokenRequest.memberId() != null) {
             return SignupTokenResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
