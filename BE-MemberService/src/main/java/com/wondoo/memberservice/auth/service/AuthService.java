@@ -1,12 +1,20 @@
 package com.wondoo.memberservice.auth.service;
 
+import com.wondoo.memberservice.auth.data.request.MemberLogoutRequest;
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
+import com.wondoo.memberservice.auth.domain.RefreshToken;
+import com.wondoo.memberservice.auth.exception.AuthErrorCode;
+import com.wondoo.memberservice.auth.exception.AuthException;
+import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
 import com.wondoo.memberservice.auth.utils.TokenProvider;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
+import com.wondoo.memberservice.global.data.request.MemberValidRequest;
+import com.wondoo.memberservice.global.exception.ErrorCode;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,9 +25,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
 
     /**
@@ -50,6 +60,28 @@ public class AuthService {
                 .build());
 
         return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
+    }
+
+    @Transactional
+    public void memberLogout(
+            MemberValidRequest memberValidRequest,
+            MemberLogoutRequest memberLogoutRequest
+    ) {
+
+        RefreshToken refreshToken = refreshTokenRepository.findById(memberValidRequest.socialId())
+                .orElseThrow(
+                        () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
+                );
+
+        if (isDifferentRefresh(memberLogoutRequest, refreshToken)) {
+            throw new AuthException(AuthErrorCode.REFRESH_NOT_VALID);
+        }
+        refreshTokenRepository.delete(refreshToken);
+    }
+
+    private boolean isDifferentRefresh(MemberLogoutRequest memberLogoutRequest, RefreshToken refreshToken) {
+        return !memberLogoutRequest.refreshToken()
+                .equals(refreshToken.getRefreshToken());
     }
 
     private TokenMarker getTokenMarkerForSignup(GithubUserInfoResponse githubUserInfoResponse) {
