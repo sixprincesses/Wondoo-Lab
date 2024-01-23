@@ -23,7 +23,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class AuthService {
 
     private final MemberRepository memberRepository;
@@ -60,6 +59,13 @@ public class AuthService {
         return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
     }
 
+    /**
+     * 회원 로그아웃
+     * refresh_token 검증 후 제거로 로그아웃 처리
+     *
+     * @param socialId            헤더에 담은 social_id
+     * @param memberLogoutRequest 클라이언트가 관리하는 refresh_token
+     */
     @Transactional
     public void memberLogout(
             Long socialId,

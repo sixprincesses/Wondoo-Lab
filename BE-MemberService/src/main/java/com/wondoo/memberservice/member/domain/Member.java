@@ -1,5 +1,6 @@
 package com.wondoo.memberservice.member.domain;
 
+import com.wondoo.memberservice.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -23,6 +24,21 @@ public class Member {
     @NotBlank
     @Column(name = "social_nickname", nullable = false)
     private String socialNickname;
+
+    @Column(name = "image_id")
+    private Long imageId;
+
+    @Column(name = "nickname")
+    private String nickname;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "gender")
+    private String gender;
 
     @Builder
     public Member(Long socialId, String socialNickname) {
