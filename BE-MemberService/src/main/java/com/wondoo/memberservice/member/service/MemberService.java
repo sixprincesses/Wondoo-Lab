@@ -37,32 +37,37 @@ public class MemberService implements MemberSaveService {
         Optional<Member> tmpMember = memberRepository.findBySocialId(githubUserInfoResponse.socialId());
 
         if (tmpMember.isEmpty()) {
-            Member member = memberRepository.save(Member.builder()
-                    .socialId(githubUserInfoResponse.socialId())
-                    .socialNickname(githubUserInfoResponse.socialNickname())
-                    .build());
-
-            TokenMarker tokenMarker = tokenProvider.jwtSave(MemberTokenRequest.builder()
-                    .memberId(member.getId())
-                    .socialId(member.getSocialId())
-                    .build());
+            TokenMarker tokenMarker = getTokenMarkerForSignup(githubUserInfoResponse);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(tokenMarker);
         }
 
+        Member member = tmpMember.get();
         // Github Nickname 을 변경했으면 반영
-        if (isDifferentPreSocialNickname(githubUserInfoResponse, tmpMember)) {
-            tmpMember.get().updateSocialNickname(githubUserInfoResponse.socialNickname());
+        if (isDifferentPreSocialNickname(githubUserInfoResponse, member)) {
+            member.updateSocialNickname(githubUserInfoResponse.socialNickname());
         }
 
         TokenMarker tokenMarker = tokenProvider.jwtSave(MemberTokenRequest.builder()
-                .socialId(tmpMember.get().getSocialId())
+                .socialId(member.getSocialId())
                 .build());
 
         return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
     }
 
-    private boolean isDifferentPreSocialNickname(GithubUserInfoResponse githubUserInfoResponse, Optional<Member> tmpMember) {
-        return !githubUserInfoResponse.socialNickname().equals(tmpMember.get().getSocialNickname());
+    private TokenMarker getTokenMarkerForSignup(GithubUserInfoResponse githubUserInfoResponse) {
+        Member member = memberRepository.save(Member.builder()
+                .socialId(githubUserInfoResponse.socialId())
+                .socialNickname(githubUserInfoResponse.socialNickname())
+                .build());
+
+        return tokenProvider.jwtSave(MemberTokenRequest.builder()
+                .memberId(member.getId())
+                .socialId(member.getSocialId())
+                .build());
+    }
+
+    private boolean isDifferentPreSocialNickname(GithubUserInfoResponse githubUserInfoResponse, Member member) {
+        return !githubUserInfoResponse.socialNickname().equals(member.getSocialNickname());
     }
 }
