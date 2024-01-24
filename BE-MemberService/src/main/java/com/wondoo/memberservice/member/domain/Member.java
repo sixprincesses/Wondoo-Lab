@@ -59,7 +59,7 @@ public class Member extends BaseEntity {
         socialNickname = newSocialNickname;
     }
 
-    public void updateMemberInfo(String newNickname, String newName, String newEmail, String newPhone, String newGender){
+    public void updateMemberInfo(String newNickname, String newName, String newEmail, String newPhone, String newGender) {
         nickname = newNickname;
         name = newName;
         email = newEmail;

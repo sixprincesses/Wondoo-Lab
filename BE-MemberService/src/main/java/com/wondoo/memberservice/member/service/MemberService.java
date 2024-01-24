@@ -19,6 +19,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
 
     /**
      * Member 조회
+     *
      * @param memberId Member PK
      * @return nickname, name, email 반환 / 추후 이미지 추가
      */
@@ -50,7 +51,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
     }
 
     private void validRequester(Long socialId, Member member) {
-        if (!member.getSocialId().equals(socialId)){
+        if (!member.getSocialId().equals(socialId)) {
             throw new MemberException(MemberErrorCode.MEMBER_WRONG_ACCESS);
         }
     }

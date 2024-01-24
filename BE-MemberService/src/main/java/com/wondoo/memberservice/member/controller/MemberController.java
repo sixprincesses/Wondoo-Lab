@@ -28,7 +28,7 @@ public class MemberController {
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId,
             @RequestBody @Valid MemberUpdateRequest memberUpdateRequest
-            ){
+    ) {
 
         memberSaveService.memberUpdate(memberId, socialId, memberUpdateRequest);
         return ResponseEntity.ok("update success");
