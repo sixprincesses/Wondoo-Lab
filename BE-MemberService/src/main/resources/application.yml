@@ -1,4 +1,8 @@
 spring:
+  server:
+    servlet:
+      encoding:
+        force-response: true
   output:
     ansi:
       enabled: always
