@@ -1,6 +1,6 @@
 package com.wondoo.memberservice.auth.controller;
 
-import com.wondoo.memberservice.auth.data.request.MemberLogoutRequest;
+import com.wondoo.memberservice.auth.data.request.RefreshRelatedRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
 import com.wondoo.memberservice.auth.service.AuthService;
 import com.wondoo.memberservice.auth.client.github.GithubClient;
@@ -34,11 +34,20 @@ public class AuthController {
     @PostMapping("/member/logout")
     public ResponseEntity<String> memberLogout(
             @RequestHeader("social_id") Long socialId,
-            @RequestBody @Valid MemberLogoutRequest memberLogoutRequest
+            @RequestBody @Valid RefreshRelatedRequest refreshRelatedRequest
     ) {
 
-        authService.memberLogout(socialId, memberLogoutRequest);
+        authService.memberLogout(socialId, refreshRelatedRequest);
 
         return ResponseEntity.ok("Logout Success");
+    }
+
+    @PostMapping("/member/refresh")
+    public ResponseEntity<TokenMarker> memberRefresh(
+            @RequestHeader("social_id") Long socialId,
+            @RequestBody @Valid RefreshRelatedRequest refreshRelatedRequest
+    ) {
+
+        return ResponseEntity.ok(authService.memberRefresh(socialId, refreshRelatedRequest));
     }
 }
