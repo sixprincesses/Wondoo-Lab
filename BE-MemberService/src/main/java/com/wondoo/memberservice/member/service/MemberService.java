@@ -35,6 +35,14 @@ public class MemberService implements MemberSaveService, MemberLoadService {
                 .build();
     }
 
+    /**
+     * Member 정보 수정
+     * nickname, email, phone 필드는 유효성 검증 후 수정
+     *
+     * @param memberId            Member PK
+     * @param socialId            요청자와 접근하고자 하는 Member 동일성 검증
+     * @param memberUpdateRequest 수정하고자 하는 필드
+     */
     @Transactional
     @Override
     public void memberUpdate(Long memberId, Long socialId, MemberUpdateRequest memberUpdateRequest) {
