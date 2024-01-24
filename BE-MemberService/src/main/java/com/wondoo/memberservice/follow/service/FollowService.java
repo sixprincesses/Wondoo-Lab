@@ -45,6 +45,39 @@ public class FollowService implements FollowSaveService {
                 .build());
     }
 
+    /**
+     * 언팔로우 로직 구현
+     * 자기 자신을 언팔로우 못하도록 제한
+     * 이미 팔로우 한 상태인지 확인
+     *
+     * @param memberId 팔로우 받는 사람
+     * @param socialId 팔로우 요청하는 사람
+     */
+    @Transactional
+    @Override
+    public void memberUnfollow(Long memberId, Long socialId) {
+
+        Member to = checkTo(memberId);
+
+        if (to.getSocialId().equals(socialId)) {
+            throw new FollowException(FollowErrorCode.FOLLOW_BAD_REQUEST);
+        }
+
+        Member from = checkFrom(socialId);
+
+        Follow follow = followRepository.findById(
+                        Follow.builder()
+                                .to(to)
+                                .from(from)
+                                .build()
+                                .getId())
+                .orElseThrow(
+                        () -> new FollowException(FollowErrorCode.FOLLOW_NOT_FOUND)
+                );
+        followRepository.delete(follow);
+    }
+
+
     private Member checkFrom(Long socialId) {
         return memberRepository.findBySocialId(socialId)
                 .orElseThrow(
