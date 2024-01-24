@@ -72,14 +72,8 @@ public class AuthService {
             RefreshRelatedRequest refreshRelatedRequest
     ) {
 
-        RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
-                .orElseThrow(
-                        () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
-                );
+        RefreshToken refreshToken = checkRefreshToken(socialId, refreshRelatedRequest);
 
-        if (isDifferentRefresh(refreshRelatedRequest, refreshToken)) {
-            throw new AuthException(AuthErrorCode.REFRESH_NOT_VALID);
-        }
         refreshTokenRepository.delete(refreshToken);
     }
 
@@ -97,6 +91,14 @@ public class AuthService {
             RefreshRelatedRequest refreshRelatedRequest
     ) {
 
+        checkRefreshToken(socialId, refreshRelatedRequest);
+
+        return tokenProvider.jwtSave(MemberTokenRequest.builder()
+                .socialId(socialId)
+                .build());
+    }
+
+    private RefreshToken checkRefreshToken(Long socialId, RefreshRelatedRequest refreshRelatedRequest) {
         RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
                 .orElseThrow(
                         () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
@@ -105,10 +107,7 @@ public class AuthService {
         if (isDifferentRefresh(refreshRelatedRequest, refreshToken)) {
             throw new AuthException(AuthErrorCode.REFRESH_NOT_VALID);
         }
-
-        return tokenProvider.jwtSave(MemberTokenRequest.builder()
-                .socialId(socialId)
-                .build());
+        return refreshToken;
     }
 
     private boolean isDifferentRefresh(RefreshRelatedRequest refreshRelatedRequest, RefreshToken refreshToken) {
