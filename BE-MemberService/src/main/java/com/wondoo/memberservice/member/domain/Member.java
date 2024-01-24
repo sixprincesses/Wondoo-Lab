@@ -52,9 +52,10 @@ public class Member extends BaseEntity {
     public Member(Long socialId, String socialNickname) {
         this.socialId = socialId;
         this.socialNickname = socialNickname;
+        this.nickname = socialNickname;
     }
 
-    public void updateSocialNickname(String socialNickname) {
-        this.socialNickname = socialNickname;
+    public void updateSocialNickname(String newSocialNickname) {
+        socialNickname = newSocialNickname;
     }
 }
