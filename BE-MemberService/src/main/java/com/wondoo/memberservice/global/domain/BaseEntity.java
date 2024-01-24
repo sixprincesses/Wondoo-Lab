@@ -16,10 +16,10 @@ import java.time.LocalDate;
 public class BaseEntity {
 
     @CreatedDate
-    @Column(name = "create_date", updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDate createDate;
 
     @LastModifiedDate
-    @Column(name = "update_date", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDate updateDate;
 }

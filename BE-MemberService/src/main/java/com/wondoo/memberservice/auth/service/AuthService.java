@@ -1,7 +1,7 @@
 package com.wondoo.memberservice.auth.service;
 
-import com.wondoo.memberservice.auth.data.request.MemberLogoutRequest;
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
+import com.wondoo.memberservice.auth.data.request.RefreshRelatedRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
 import com.wondoo.memberservice.auth.domain.RefreshToken;
 import com.wondoo.memberservice.auth.exception.AuthErrorCode;
@@ -64,12 +64,12 @@ public class AuthService {
      * refresh_token 검증 후 제거로 로그아웃 처리
      *
      * @param socialId            헤더에 담은 social_id
-     * @param memberLogoutRequest 클라이언트가 관리하는 refresh_token
+     * @param refreshRelatedRequest 클라이언트가 관리하는 refresh_token
      */
     @Transactional
     public void memberLogout(
             Long socialId,
-            MemberLogoutRequest memberLogoutRequest
+            RefreshRelatedRequest refreshRelatedRequest
     ) {
 
         RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
@@ -77,14 +77,41 @@ public class AuthService {
                         () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
                 );
 
-        if (isDifferentRefresh(memberLogoutRequest, refreshToken)) {
+        if (isDifferentRefresh(refreshRelatedRequest, refreshToken)) {
             throw new AuthException(AuthErrorCode.REFRESH_NOT_VALID);
         }
         refreshTokenRepository.delete(refreshToken);
     }
 
-    private boolean isDifferentRefresh(MemberLogoutRequest memberLogoutRequest, RefreshToken refreshToken) {
-        return !memberLogoutRequest.refreshToken()
+    /**
+     * JWT Refresh 요청
+     * refresh_token 검증 후 JWT 재발급
+     * @param socialId 헤더에 담은 social_id
+     * @param refreshRelatedRequest 클라이언트가 관리하는 refresh_token
+     * @return JWT 반환
+     */
+    @Transactional
+    public TokenMarker memberRefresh(
+            Long socialId,
+            RefreshRelatedRequest refreshRelatedRequest
+    ){
+
+        RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
+                .orElseThrow(
+                        () -> new AuthException(AuthErrorCode.REFRESH_NOT_FOUND)
+                );
+
+        if (isDifferentRefresh(refreshRelatedRequest, refreshToken)) {
+            throw new AuthException(AuthErrorCode.REFRESH_NOT_VALID);
+        }
+
+        return tokenProvider.jwtSave(MemberTokenRequest.builder()
+                .socialId(socialId)
+                .build());
+    }
+
+    private boolean isDifferentRefresh(RefreshRelatedRequest refreshRelatedRequest, RefreshToken refreshToken) {
+        return !refreshRelatedRequest.refreshToken()
                 .equals(refreshToken.getRefreshToken());
     }
 
