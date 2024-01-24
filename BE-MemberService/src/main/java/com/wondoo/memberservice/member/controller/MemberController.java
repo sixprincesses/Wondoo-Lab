@@ -27,7 +27,7 @@ public class MemberController {
     @GetMapping("member/{member_id}")
     public ResponseEntity<MemberDetailResponse> memberLoad(@PathVariable("member_id") Long memberId) {
 
-        return ResponseEntity.ok(memberLoadService.memberLoad(memberId));
+        return ResponseEntity.ok(memberLoadService.memberDetailLoad(memberId));
     }
 
     @PutMapping("member/{member_id}")

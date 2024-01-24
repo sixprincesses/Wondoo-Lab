@@ -25,7 +25,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
      * @return nickname, name, email 반환 / 추후 이미지 추가
      */
     @Override
-    public MemberDetailResponse memberLoad(Long memberId) {
+    public MemberDetailResponse memberDetailLoad(Long memberId) {
 
         Member member = checkMember(memberId);
 
