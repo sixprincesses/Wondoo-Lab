@@ -63,7 +63,7 @@ public class AuthService {
      * 회원 로그아웃
      * refresh_token 검증 후 제거로 로그아웃 처리
      *
-     * @param socialId            헤더에 담은 social_id
+     * @param socialId              헤더에 담은 social_id
      * @param refreshRelatedRequest 클라이언트가 관리하는 refresh_token
      */
     @Transactional
@@ -86,7 +86,8 @@ public class AuthService {
     /**
      * JWT Refresh 요청
      * refresh_token 검증 후 JWT 재발급
-     * @param socialId 헤더에 담은 social_id
+     *
+     * @param socialId              헤더에 담은 social_id
      * @param refreshRelatedRequest 클라이언트가 관리하는 refresh_token
      * @return JWT 반환
      */
@@ -94,7 +95,7 @@ public class AuthService {
     public TokenMarker memberRefresh(
             Long socialId,
             RefreshRelatedRequest refreshRelatedRequest
-    ){
+    ) {
 
         RefreshToken refreshToken = refreshTokenRepository.findById(socialId)
                 .orElseThrow(
