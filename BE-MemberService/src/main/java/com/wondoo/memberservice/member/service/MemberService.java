@@ -1,6 +1,7 @@
 package com.wondoo.memberservice.member.service;
 
 import com.wondoo.memberservice.member.data.request.MemberUpdateRequest;
+import com.wondoo.memberservice.member.data.response.BetweenServerResponse;
 import com.wondoo.memberservice.member.data.response.MemberDetailResponse;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.exception.MemberErrorCode;
@@ -32,6 +33,24 @@ public class MemberService implements MemberSaveService, MemberLoadService {
                 .nickname(member.getNickname())
                 .name(member.getName())
                 .email(member.getEmail())
+                .build();
+    }
+
+    /**
+     * 타 서버 요청자 검증용 social_id 반환 로직
+     *
+     * @param memberId Member PK
+     * @return social_id 반환
+     */
+    @Override
+    public BetweenServerResponse betweenServerLoad(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+        return BetweenServerResponse.builder()
+                .social_id(member.getSocialId())
                 .build();
     }
 
