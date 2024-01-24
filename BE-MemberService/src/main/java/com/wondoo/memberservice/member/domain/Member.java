@@ -60,10 +60,10 @@ public class Member extends BaseEntity {
     }
 
     public void updateMemberInfo(String newNickname, String newName, String newEmail, String newPhone, String newGender) {
-        nickname = newNickname != null ? newNickname : nickname;
-        name = newName != null ? newName : name;
-        email = newEmail != null ? newEmail : email;
-        phone = newPhone != null ? newPhone : phone;
-        gender = newGender != null ? newGender : gender;
+        nickname = (newNickname != null ? newNickname : nickname);
+        name = (newName != null ? newName : name);
+        email = (newEmail != null ? newEmail : email);
+        phone = (newPhone != null ? newPhone : phone);
+        gender = (newGender != null ? newGender : gender);
     }
 }
