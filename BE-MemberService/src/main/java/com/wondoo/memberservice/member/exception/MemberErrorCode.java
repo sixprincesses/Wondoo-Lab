@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public enum MemberErrorCode implements ErrorCode {
 
-    MEMBER_NOT_FOUND(400, "Member_001", "member is not found"),
-    MEMBER_WRONG_ACCESS(401, "Member_002", "cannot access logic");
+    MEMBER_NOT_FOUND(400, "Member_001", "사용자가 존재하지 않습니다."),
+    MEMBER_WRONG_ACCESS(401, "Member_002", "접근할 수 없는 서비스입니다.");
 
     private final int status;
     private final String code;
