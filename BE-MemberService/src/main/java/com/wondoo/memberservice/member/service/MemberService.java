@@ -27,7 +27,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
     @Override
     public MemberDetailResponse memberDetailLoad(Long memberId) {
 
-        Member member = checkMember(memberId);
+        Member member = findById(memberId);
 
         return MemberDetailResponse.builder()
                 .nickname(member.getNickname())
@@ -66,7 +66,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
     @Override
     public void memberUpdate(Long memberId, Long socialId, MemberUpdateRequest memberUpdateRequest) {
 
-        Member member = checkMember(memberId);
+        Member member = findById(memberId);
         validRequester(socialId, member);
         member.updateMemberInfo(
                 memberUpdateRequest.nickname(),
@@ -83,7 +83,7 @@ public class MemberService implements MemberSaveService, MemberLoadService {
         }
     }
 
-    private Member checkMember(Long memberId) {
+    private Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(
                         () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
