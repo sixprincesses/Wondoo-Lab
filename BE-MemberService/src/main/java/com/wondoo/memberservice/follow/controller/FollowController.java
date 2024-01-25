@@ -15,7 +15,7 @@ public class FollowController {
 
     private final FollowSaveService followSaveService;
 
-    @PostMapping("member/{member_id}/follow")
+    @PostMapping("/member/{member_id}/follow")
     public ResponseEntity<String> memberFollow(
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId
@@ -25,7 +25,7 @@ public class FollowController {
         return ResponseEntity.ok("follow success");
     }
 
-    @DeleteMapping("member/{member_id}/follow")
+    @DeleteMapping("/member/{member_id}/follow")
     public ResponseEntity<String> memberUnfollow(
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId
