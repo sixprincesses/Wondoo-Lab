@@ -1,21 +1,22 @@
 package com.wondoo.articleservice.feed.repository.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.wondoo.articleservice.feed.domain.Feed;
 import com.wondoo.articleservice.feed.domain.QFeedMember;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-public class FeedRepositoryImpl implements FeedRepositoryCustom {
+public class FeedMemberRepositoryImpl implements FeedMemberRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Feed> findRandomFeeds(Long feedId) {
+    public List<String> findByRecentFeedId(Long id) {
         QFeedMember feedMember = QFeedMember.feedMember;
-        // feedMember feedId 기준 20개 선택
-        //return jpaQueryFactory.selectFrom();
-        return null;
+        return jpaQueryFactory.select(feedMember.feedId)
+                .from(feedMember)
+                .where(feedMember.id.loe(id))
+                .limit(20)
+                .fetch();
     }
 }
