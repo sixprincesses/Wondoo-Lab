@@ -10,6 +10,7 @@ import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
 import com.wondoo.memberservice.auth.utils.TokenProvider;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubUserInfoResponse;
 import com.wondoo.memberservice.member.domain.Member;
+import com.wondoo.memberservice.member.domain.Statistic;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,6 +120,9 @@ public class AuthService {
         Member member = memberRepository.save(Member.builder()
                 .socialId(githubUserInfoResponse.socialId())
                 .socialNickname(githubUserInfoResponse.socialNickname())
+                .statistic(Statistic
+                        .builder()
+                        .build())
                 .build());
 
         return tokenProvider.jwtSave(MemberTokenRequest.builder()

@@ -43,6 +43,10 @@ public class FollowService implements FollowSaveService {
                 .to(to)
                 .from(from)
                 .build());
+        to.getStatistic()
+                .followerCalculate(true);
+        from.getStatistic()
+                .followingCalculate(true);
     }
 
     /**
@@ -75,6 +79,10 @@ public class FollowService implements FollowSaveService {
                         () -> new FollowException(FollowErrorCode.FOLLOW_NOT_FOUND)
                 );
         followRepository.delete(follow);
+        to.getStatistic()
+                .followerCalculate(false);
+        from.getStatistic()
+                .followingCalculate(false);
     }
 
 
