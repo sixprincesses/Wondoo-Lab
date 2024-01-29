@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "statistic")
 public class Statistic {
 
@@ -33,9 +32,9 @@ public class Statistic {
     private Long followingCount;
 
     @Builder
-    public Statistic(Long followerCount, Long followingCount) {
-        this.followerCount = followerCount;
-        this.followingCount = followingCount;
+    public Statistic() {
+        this.followerCount = 0L;
+        this.followingCount = 0L;
     }
 
     public void followerCalculate(boolean isFollowed) {

@@ -122,8 +122,6 @@ public class AuthService {
                 .socialNickname(githubUserInfoResponse.socialNickname())
                 .statistic(Statistic
                         .builder()
-                        .followerCount(0L)
-                        .followingCount(0L)
                         .build())
                 .build());
 
