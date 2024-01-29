@@ -52,6 +52,7 @@ public class FollowService implements FollowSaveService {
                 .followingCalculate(true);
         kafkaProvider.FollowMessage(
                 FollowMessage.builder()
+                        .targetId(to.getId())
                         .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
                         .build()
         );
