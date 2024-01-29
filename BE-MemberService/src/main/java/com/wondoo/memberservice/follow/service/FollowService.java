@@ -3,7 +3,9 @@ package com.wondoo.memberservice.follow.service;
 import com.wondoo.memberservice.follow.domain.Follow;
 import com.wondoo.memberservice.follow.exception.FollowErrorCode;
 import com.wondoo.memberservice.follow.exception.FollowException;
+import com.wondoo.memberservice.follow.message.FollowMessage;
 import com.wondoo.memberservice.follow.repository.FollowRepository;
+import com.wondoo.memberservice.global.utils.KafkaProvider;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.exception.MemberErrorCode;
 import com.wondoo.memberservice.member.exception.MemberException;
@@ -19,6 +21,7 @@ public class FollowService implements FollowSaveService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final KafkaProvider kafkaProvider;
 
     /**
      * 팔로우 로직 구현
@@ -47,6 +50,11 @@ public class FollowService implements FollowSaveService {
                 .followerCalculate(true);
         from.getStatistic()
                 .followingCalculate(true);
+        kafkaProvider.FollowMessage(
+                FollowMessage.builder()
+                        .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
+                        .build()
+        );
     }
 
     /**
