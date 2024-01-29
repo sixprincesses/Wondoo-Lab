@@ -19,13 +19,14 @@ public class FeedController {
     private final FeedService feedService;
 
     @GetMapping("/feed/{feed_id}")
-    public ResponseEntity<?> getRandomFeedList(@RequestParam(name = "feed_id") String feedId) {
-        feedService.getFeeds(feedId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<?> getRandomFeedList(@PathVariable("feed_id") String feedId) {
+        // feedId 없을 때 조건처리
+        return ResponseEntity.status(HttpStatus.OK).body(feedService.getFeeds(feedId));
     }
 
     @PostMapping("/feed")
-    public ResponseEntity<?> createFeed(@RequestHeader("member_id") Long memberId, @RequestBody RequestFeed requestDto) {
+    public ResponseEntity<?> createFeed(@RequestBody RequestFeed requestDto) {
+        log.info(requestDto.toString());
         feedService.createFeed(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
