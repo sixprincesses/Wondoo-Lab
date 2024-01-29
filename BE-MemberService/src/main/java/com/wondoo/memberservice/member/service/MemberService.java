@@ -4,9 +4,11 @@ import com.wondoo.memberservice.member.data.request.MemberUpdateRequest;
 import com.wondoo.memberservice.member.data.response.BetweenServerResponse;
 import com.wondoo.memberservice.member.data.response.MemberDetailResponse;
 import com.wondoo.memberservice.member.domain.Member;
+import com.wondoo.memberservice.member.domain.Statistic;
 import com.wondoo.memberservice.member.exception.MemberErrorCode;
 import com.wondoo.memberservice.member.exception.MemberException;
 import com.wondoo.memberservice.member.repository.MemberRepository;
+import com.wondoo.memberservice.member.repository.StatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService implements MemberSaveService, MemberLoadService {
 
     private final MemberRepository memberRepository;
+    private final StatisticRepository statisticRepository;
 
     /**
      * Member 조회
@@ -28,11 +31,16 @@ public class MemberService implements MemberSaveService, MemberLoadService {
     public MemberDetailResponse memberDetailLoad(Long memberId) {
 
         Member member = findById(memberId);
+        Statistic statistic = statisticRepository.findById(
+                member.getStatistic()
+                        .getId()).get();
 
         return MemberDetailResponse.builder()
                 .nickname(member.getNickname())
                 .name(member.getName())
                 .email(member.getEmail())
+                .followingCount(statistic.getFollowingCount())
+                .followerCount(statistic.getFollowerCount())
                 .build();
     }
 

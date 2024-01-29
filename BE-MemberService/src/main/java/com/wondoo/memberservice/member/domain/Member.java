@@ -35,7 +35,7 @@ public class Member extends BaseEntity {
     @Column(name = "image_id")
     private Long imageId;
 
-    @Pattern(regexp = "^[가-힣A-Za-z][가-힣A-Za-z0-9]{1,9}$")
+    @Pattern(regexp = "^[가-힣A-Za-z][가-힣A-Za-z0-9-]{1,40}$")
     @Column(name = "nickname")
     private String nickname;
 
@@ -61,11 +61,19 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "from")
     private List<Follow> followers = new ArrayList<>();
 
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
+    @JoinColumn(name = "statistic_id")
+    private Statistic statistic;
+
     @Builder
-    public Member(Long socialId, String socialNickname) {
+    public Member(Long socialId, String socialNickname, Statistic statistic) {
         this.socialId = socialId;
         this.socialNickname = socialNickname;
         this.nickname = socialNickname;
+        this.statistic = statistic;
     }
 
     public void updateSocialNickname(String newSocialNickname) {

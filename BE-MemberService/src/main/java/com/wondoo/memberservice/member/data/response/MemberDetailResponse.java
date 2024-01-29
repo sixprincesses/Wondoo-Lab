@@ -10,6 +10,10 @@ public record MemberDetailResponse(
         @JsonProperty("name")
         String name,
         @JsonProperty("email")
-        String email
+        String email,
+        @JsonProperty("follower_count")
+        Long followerCount,
+        @JsonProperty("following_count")
+        Long followingCount
 ) {
 }
