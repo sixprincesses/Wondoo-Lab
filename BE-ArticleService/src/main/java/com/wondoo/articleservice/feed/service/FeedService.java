@@ -1,16 +1,19 @@
 package com.wondoo.articleservice.feed.service;
 
 import com.wondoo.articleservice.feed.data.request.RequestFeed;
+import com.wondoo.articleservice.feed.data.response.ResponseFeed;
 import com.wondoo.articleservice.feed.domain.Feed;
 import com.wondoo.articleservice.feed.domain.FeedMember;
 import com.wondoo.articleservice.feed.repository.FeedMemberRepository;
 import com.wondoo.articleservice.feed.repository.FeedRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,12 +21,30 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class FeedService {
     private final FeedRepository feedRepository;
     private final FeedMemberRepository feedMemberRepository;
 
-    public void getFeeds(String feedId) {
-        // FeedMember에서 index별로 가져오기 g
+    public List<ResponseFeed> getFeeds(String feedId) {
+        Long id = feedMemberRepository.findByFeedId(feedId).getId();
+        List<String> feedIds = feedMemberRepository.findByRecentFeedId(id);
+        List<Feed> feeds = feedRepository.findByIdIn(feedIds);
+        List<ResponseFeed> responseFeeds = new ArrayList<>();
+        for (Feed feed : feeds) {
+            responseFeeds.add(ResponseFeed.builder()
+                    .feedId(feed.getId())
+                    //.nickname()
+                    .title(feed.getTitle())
+                    .content(feed.getContent())
+                    .timeLogs(feed.getTimeLogs())
+                    .totalTime(feed.getTotalTime())
+                    .createdTime(feed.getCreatedTime())
+                    .updatedTime(feed.getUpdatedTime())
+                    .build());
+            // nickname 넣기
+        }
+        return responseFeeds;
     }
 
     @Transactional
