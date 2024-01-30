@@ -1,4 +1,4 @@
-package com.wondoo.articleservice.feed.data.response;
+package com.wondoo.articleservice.feed.data.request;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,12 +10,10 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class ResponseFeed {
+public class FeedRequest {
     private String feedId;
 
     private Long memberId;
-
-    private String nickname;
 
     private String title;
 
@@ -23,9 +21,4 @@ public class ResponseFeed {
 
     private List<List<LocalDateTime>> timeLogs;
 
-    private Long totalTime;
-
-    private LocalDateTime createdTime;
-
-    private LocalDateTime updatedTime;
 }
