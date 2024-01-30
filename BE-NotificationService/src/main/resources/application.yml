@@ -1,0 +1,17 @@
+server:
+  port: 8081
+spring:
+  output:
+    ansi:
+      enabled: always
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${DATABASE}
+  kafka:
+    bootstrap-servers: localhost:9092
+message:
+  topic:
+    name: ${TOPIC_NAME}
+    group-id: member
