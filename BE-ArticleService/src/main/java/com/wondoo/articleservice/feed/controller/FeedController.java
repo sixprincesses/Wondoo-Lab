@@ -1,14 +1,12 @@
 package com.wondoo.articleservice.feed.controller;
 
-import com.wondoo.articleservice.feed.data.request.RequestFeed;
+import com.wondoo.articleservice.feed.data.request.FeedRequest;
 import com.wondoo.articleservice.feed.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RestController
 @CrossOrigin("*")
@@ -25,14 +23,14 @@ public class FeedController {
     }
 
     @PostMapping("/feed")
-    public ResponseEntity<?> createFeed(@RequestBody RequestFeed requestDto) {
+    public ResponseEntity<?> createFeed(@RequestBody FeedRequest requestDto) {
         log.info(requestDto.toString());
         feedService.createFeed(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/feed")
-    public ResponseEntity<?> updateFeed(@RequestHeader("member_id") Long memberId, @RequestBody RequestFeed requestDto) {
+    public ResponseEntity<?> updateFeed(@RequestHeader("member_id") Long memberId, @RequestBody FeedRequest requestDto) {
         feedService.updateFeed(requestDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

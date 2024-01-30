@@ -1,7 +1,7 @@
 package com.wondoo.articleservice.feed.service;
 
-import com.wondoo.articleservice.feed.data.request.RequestFeed;
-import com.wondoo.articleservice.feed.data.response.ResponseFeed;
+import com.wondoo.articleservice.feed.data.request.FeedRequest;
+import com.wondoo.articleservice.feed.data.response.FeedResponse;
 import com.wondoo.articleservice.feed.domain.Feed;
 import com.wondoo.articleservice.feed.domain.FeedMember;
 import com.wondoo.articleservice.feed.repository.FeedMemberRepository;
@@ -26,13 +26,13 @@ public class FeedService {
     private final FeedRepository feedRepository;
     private final FeedMemberRepository feedMemberRepository;
 
-    public List<ResponseFeed> getFeeds(String feedId) {
+    public List<FeedResponse> getFeeds(String feedId) {
         Long id = feedMemberRepository.findByFeedId(feedId).getId();
         List<String> feedIds = feedMemberRepository.findByRecentFeedId(id);
         List<Feed> feeds = feedRepository.findByIdIn(feedIds);
-        List<ResponseFeed> responseFeeds = new ArrayList<>();
+        List<FeedResponse> responseFeeds = new ArrayList<>();
         for (Feed feed : feeds) {
-            responseFeeds.add(ResponseFeed.builder()
+            responseFeeds.add(FeedResponse.builder()
                     .feedId(feed.getId())
                     //.nickname()
                     .title(feed.getTitle())
@@ -48,7 +48,7 @@ public class FeedService {
     }
 
     @Transactional
-    public void createFeed(RequestFeed requestDto) {
+    public void createFeed(FeedRequest requestDto) {
         String feedId = UUID.randomUUID().toString();
 
         FeedMember feedMember = FeedMember.builder()
@@ -67,19 +67,17 @@ public class FeedService {
                 .memberId(requestDto.getMemberId())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .TimeLogs(requestDto.getTimeLogs())
+                .timeLogs(requestDto.getTimeLogs())
                 .totalTime(totalTime)
                 .build();
         feedRepository.save(feed);
     }
 
     @Transactional
-    public void updateFeed(RequestFeed requestDto) {
-        Optional<Feed> feed = feedRepository.findById(requestDto.getFeedId());
-        if (feed.isPresent()) {
-            feed.get().updateFeed(requestDto.getTitle(), requestDto.getContent());
-            feedRepository.save(feed.get());
-        }
+    public void updateFeed(FeedRequest requestDto) {
+        Feed feed = feedRepository.findById(requestDto.getFeedId())
+                .orElseThrow(() -> new RuntimeException());
+        feed.updateFeed(requestDto.getTitle(), requestDto.getContent());
     }
 
     @Transactional
