@@ -5,20 +5,14 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class FollowersResponse {
 
-    @JsonProperty("followers")
-    private List<String> followers;
-    @JsonProperty("followers_count")
-    private Long followersCount;
+    @JsonProperty("follower_nickname")
+    private String followerNickname;
 
     @QueryProjection
-    @Builder
-    public FollowersResponse(List<String> followers, Long followersCount) {
-        this.followers = followers;
-        this.followersCount = followersCount;
+    public FollowersResponse(String followerNickname) {
+        this.followerNickname = followerNickname;
     }
 }
