@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-@RequiredArgsConstructor
 public class EmitterRepository {
 
     private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
