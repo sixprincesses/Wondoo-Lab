@@ -3,6 +3,7 @@ package com.wondoo.memberservice.follow.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wondoo.memberservice.follow.data.message.FollowMessage;
+import com.wondoo.memberservice.follow.data.query.FollowersResponse;
 import com.wondoo.memberservice.follow.domain.Follow;
 import com.wondoo.memberservice.follow.exception.FollowErrorCode;
 import com.wondoo.memberservice.follow.exception.FollowException;
@@ -13,18 +14,21 @@ import com.wondoo.memberservice.member.exception.MemberErrorCode;
 import com.wondoo.memberservice.member.exception.MemberException;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class FollowService implements FollowSaveService {
+public class FollowService implements FollowSaveService, FollowLoadService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
     private final KafkaProducer kafkaProducer;
     private final ObjectMapper objectMapper;
+
     /**
      * 팔로우 로직 구현
      * 자기 자신을 팔로우 못하도록 제한
@@ -99,6 +103,20 @@ public class FollowService implements FollowSaveService {
                 .followingCalculate(false);
     }
 
+    /**
+     * 페이지네이션 정보 기반 팔로워 조회
+     * 현재 팔로워 닉네임만 조회되는데 추후 이미지도 조회 가능하도록 수정 예정
+     *
+     * @param memberId 조회할 기준 member_id
+     * @param pageable 페이지네이션 정보 (page_size, page_offset)
+     * @return Page 정보
+     */
+    @Override
+    public Page<FollowersResponse> followersLoad(Long memberId, Pageable pageable) {
+
+        findById(memberId);
+        return followRepository.followersLoad(memberId, pageable);
+    }
 
     private Member checkFrom(Long socialId) {
         return memberRepository.findBySocialId(socialId)
@@ -108,6 +126,13 @@ public class FollowService implements FollowSaveService {
     }
 
     private Member checkTo(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+    }
+
+    private Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(
                         () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
