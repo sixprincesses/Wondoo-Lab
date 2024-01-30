@@ -1,10 +1,11 @@
 package com.wondoo.articleservice.feed.repository.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.wondoo.articleservice.feed.domain.QFeedMember;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+
+import static com.wondoo.articleservice.feed.domain.QFeedMember.*;
 
 @RequiredArgsConstructor
 public class FeedMemberRepositoryImpl implements FeedMemberRepositoryCustom {
@@ -12,7 +13,6 @@ public class FeedMemberRepositoryImpl implements FeedMemberRepositoryCustom {
 
     @Override
     public List<String> findByRecentFeedId(Long id) {
-        QFeedMember feedMember = QFeedMember.feedMember;
         return jpaQueryFactory.select(feedMember.feedId)
                 .from(feedMember)
                 .where(feedMember.id.loe(id))
