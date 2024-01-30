@@ -1,20 +1,22 @@
 package com.wondoo.memberservice.follow.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.wondoo.memberservice.follow.data.query.FollowersResponse;
+import com.wondoo.memberservice.follow.service.FollowLoadService;
 import com.wondoo.memberservice.follow.service.FollowSaveService;
 import com.wondoo.memberservice.global.annotation.RestWondooController;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 @RestWondooController
 @RequiredArgsConstructor
 public class FollowController {
 
     private final FollowSaveService followSaveService;
+    private final FollowLoadService followLoadService;
 
     @PostMapping("/member/{member_id}/follow")
     public ResponseEntity<String> memberFollow(
@@ -32,7 +34,16 @@ public class FollowController {
             @RequestHeader("social_id") Long socialId
     ) throws JsonProcessingException {
 
-        followSaveService.memberFollow(memberId, socialId);
+        followSaveService.memberUnfollow(memberId, socialId);
         return ResponseEntity.ok("unfollow success");
+    }
+
+    @GetMapping("/member/{member_id}/followers")
+    public ResponseEntity<Page<FollowersResponse>> memberFollowers(
+            @PathVariable("member_id") Long memberId,
+            Pageable pageable
+    ){
+
+        return ResponseEntity.ok(followLoadService.followersLoad(memberId, pageable));
     }
 }
