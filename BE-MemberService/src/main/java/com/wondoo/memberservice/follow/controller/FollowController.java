@@ -1,5 +1,6 @@
 package com.wondoo.memberservice.follow.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wondoo.memberservice.follow.service.FollowSaveService;
 import com.wondoo.memberservice.global.annotation.RestWondooController;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class FollowController {
     public ResponseEntity<String> memberFollow(
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId
-    ) {
+    ) throws JsonProcessingException {
 
         followSaveService.memberFollow(memberId, socialId);
         return ResponseEntity.ok("follow success");
@@ -29,7 +30,7 @@ public class FollowController {
     public ResponseEntity<String> memberUnfollow(
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId
-    ) {
+    ) throws JsonProcessingException {
 
         followSaveService.memberFollow(memberId, socialId);
         return ResponseEntity.ok("unfollow success");

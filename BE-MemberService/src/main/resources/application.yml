@@ -17,6 +17,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+
+message:
+  topic:
+    name: ${TOPIC_NAME}
 
 logging.level:
   org.hibernate.SQL: debug
