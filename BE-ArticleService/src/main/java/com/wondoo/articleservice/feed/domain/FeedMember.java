@@ -6,10 +6,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedMember {
     @Id
     @GeneratedValue
@@ -17,4 +15,10 @@ public class FeedMember {
 
     private Long memberId;
     private String feedId;
+
+    @Builder
+    public FeedMember(Long memberId, String feedId) {
+        this.memberId = memberId;
+        this.feedId = feedId;
+    }
 }
