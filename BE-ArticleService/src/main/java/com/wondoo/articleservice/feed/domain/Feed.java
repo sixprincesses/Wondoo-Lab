@@ -1,24 +1,17 @@
 package com.wondoo.articleservice.feed.domain;
-
-import com.wondoo.articleservice._global.data.TimeLog;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Builder;
-import lombok.Getter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Document
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Feed {
     @Id
     private String id;
