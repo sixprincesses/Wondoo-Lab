@@ -1,11 +1,13 @@
 package com.wondoo.memberservice.follow.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wondoo.memberservice.follow.data.message.FollowMessage;
 import com.wondoo.memberservice.follow.domain.Follow;
 import com.wondoo.memberservice.follow.exception.FollowErrorCode;
 import com.wondoo.memberservice.follow.exception.FollowException;
-import com.wondoo.memberservice.follow.message.FollowMessage;
 import com.wondoo.memberservice.follow.repository.FollowRepository;
-import com.wondoo.memberservice.global.utils.KafkaProvider;
+import com.wondoo.memberservice.global.utils.KafkaProducer;
 import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.exception.MemberErrorCode;
 import com.wondoo.memberservice.member.exception.MemberException;
@@ -21,8 +23,8 @@ public class FollowService implements FollowSaveService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
-    private final KafkaProvider kafkaProvider;
-
+    private final KafkaProducer kafkaProducer;
+    private final ObjectMapper objectMapper;
     /**
      * 팔로우 로직 구현
      * 자기 자신을 팔로우 못하도록 제한
@@ -32,7 +34,7 @@ public class FollowService implements FollowSaveService {
      */
     @Transactional
     @Override
-    public void memberFollow(Long memberId, Long socialId) {
+    public void memberFollow(Long memberId, Long socialId) throws JsonProcessingException {
 
         Member to = checkTo(memberId);
 
@@ -50,11 +52,14 @@ public class FollowService implements FollowSaveService {
                 .followerCalculate(true);
         from.getStatistic()
                 .followingCalculate(true);
-        kafkaProvider.FollowMessage(
-                FollowMessage.builder()
-                        .targetId(to.getId())
-                        .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
-                        .build()
+
+        kafkaProducer.sendMessage(
+                objectMapper.writeValueAsString(
+                        FollowMessage.builder()
+                                .targetId(to.getSocialId())
+                                .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
+                                .build()
+                )
         );
     }
 
