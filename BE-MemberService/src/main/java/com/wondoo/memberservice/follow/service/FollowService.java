@@ -3,7 +3,7 @@ package com.wondoo.memberservice.follow.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wondoo.memberservice.follow.data.message.FollowMessage;
-import com.wondoo.memberservice.follow.data.query.FollowersResponse;
+import com.wondoo.memberservice.follow.data.query.FollowsResponse;
 import com.wondoo.memberservice.follow.domain.Follow;
 import com.wondoo.memberservice.follow.exception.FollowErrorCode;
 import com.wondoo.memberservice.follow.exception.FollowException;
@@ -14,6 +14,7 @@ import com.wondoo.memberservice.member.exception.MemberErrorCode;
 import com.wondoo.memberservice.member.exception.MemberException;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class FollowService implements FollowSaveService, FollowLoadService {
 
     private final FollowRepository followRepository;
@@ -80,19 +82,12 @@ public class FollowService implements FollowSaveService, FollowLoadService {
     public void memberUnfollow(Long memberId, Long socialId) {
 
         Member to = checkTo(memberId);
-
         if (to.getSocialId().equals(socialId)) {
             throw new FollowException(FollowErrorCode.FOLLOW_BAD_REQUEST);
         }
 
         Member from = checkFrom(socialId);
-
-        Follow follow = followRepository.findById(
-                        Follow.builder()
-                                .to(to)
-                                .from(from)
-                                .build()
-                                .getId())
+        Follow follow = followRepository.findByFollow(to.getId(), from.getId())
                 .orElseThrow(
                         () -> new FollowException(FollowErrorCode.FOLLOW_NOT_FOUND)
                 );
@@ -112,10 +107,25 @@ public class FollowService implements FollowSaveService, FollowLoadService {
      * @return Page 정보
      */
     @Override
-    public Page<FollowersResponse> followersLoad(Long memberId, Pageable pageable) {
+    public Page<FollowsResponse> followersLoad(Long memberId, Pageable pageable) {
 
         findById(memberId);
         return followRepository.followersLoad(memberId, pageable);
+    }
+
+    /**
+     * 페이지네이션 정보 기반 팔로잉 조회
+     * 현재 팔로잉 닉네임만 조회되는데 추후 이미지도 조회 가능하도록 수정 예정
+     *
+     * @param memberId 조회할 기준 member_id
+     * @param pageable 페이지네이션 정보 (page_size, page_offset)
+     * @return Page 정보
+     */
+    @Override
+    public Page<FollowsResponse> followingsLoad(Long memberId, Pageable pageable) {
+
+        findById(memberId);
+        return followRepository.followingsLoad(memberId, pageable);
     }
 
     private Member checkFrom(Long socialId) {
