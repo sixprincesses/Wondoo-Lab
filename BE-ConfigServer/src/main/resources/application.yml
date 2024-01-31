@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: ${LOCAL_SERVER_PORT}
 
 spring:
   application:
@@ -16,10 +16,10 @@ spring:
           username: ${GITHUB_USERNAME}
           password: ${GITHUB_PASSWORD}
   rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_LOCAL_IP_ADDRESS}
+    port: ${RABBITMQ_LOCAL_PORT}
+    username: ${RABBITMQ_LOCAL_USERNAME}
+    password: ${RABBITMQ_LOCAL_PASSWORD}
 
 eureka:
   instance:
@@ -28,7 +28,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: ${EUREKA_LOCAL_SERVER_IP_ADDRESS}
 
 management:
   endpoints:

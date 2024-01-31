@@ -16,10 +16,10 @@ spring:
           username: ${GITHUB_USERNAME}
           password: ${GITHUB_PASSWORD}
   rabbitmq:
-    host: ${RABBITMQ_IP_PROD_ADDRESS}
+    host: ${RABBITMQ_PROD_IP_ADDRESS}
     port: ${RABBITMQ_PROD_PORT}
-    username: ${RABBIMT_PROD_USERNAME}
-    password: ${RABBIMT_PROD_PASSWORD}
+    username: ${RABBITMQ_PROD_USERNAME}
+    password: ${RABBITMQ_PROD_PASSWORD}
 
 eureka:
   instance:
@@ -28,7 +28,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${PROD_EUREKA_SERVER_URL}/eureka
+      defaultZone: ${EUREKA_PROD_SERVER_URL}/eureka
 
 management:
   endpoints:
