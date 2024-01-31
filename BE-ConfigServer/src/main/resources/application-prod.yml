@@ -28,7 +28,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${EUREKA_PROD_SERVER_URL}/eureka
+      defaultZone: ${EUREKA_PROD_SERVER_IP_ADDRESS}
 
 management:
   endpoints:
