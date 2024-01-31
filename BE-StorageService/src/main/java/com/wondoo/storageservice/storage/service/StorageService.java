@@ -30,12 +30,7 @@ public class StorageService {
         String filename = uuidFactory.generateUUID();
         String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         String filesource = filename + "." + extension;
-
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
-        metadata.setContentLength(file.getSize());
-
-        amazonS3Client.putObject(bucket, filesource, file.getInputStream(), metadata);
+        amazonS3Client.putObject(bucket, filesource, file.getInputStream(), getObjectMetadata(file));
 
         return FileResponse.builder().filesource(filesource).build();
     }
@@ -46,18 +41,19 @@ public class StorageService {
             String filename = uuidFactory.generateUUID();
             String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
             String filesource = filename + "." + extension;
-
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-
-            amazonS3Client.putObject(bucket, filesource, file.getInputStream(), metadata);
-
+            amazonS3Client.putObject(bucket, filesource, file.getInputStream(), getObjectMetadata(file));
             filesources.add(filesource);
         }
         return FilesResponse.builder().filesources(filesources).build();
     }
 
+    private ObjectMetadata getObjectMetadata(MultipartFile file) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+        return metadata;
+    }
+    
     public void deleteFile(FileRequest file) {
         amazonS3Client.deleteObject(bucket, file.filesource());
     }
