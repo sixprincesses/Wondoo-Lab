@@ -8,6 +8,7 @@ import com.wondoo.storageservice.storage.data.request.FilesRequest;
 import com.wondoo.storageservice.storage.data.response.FileResponse;
 import com.wondoo.storageservice.storage.data.response.FilesResponse;
 import com.wondoo.storageservice.storage.service.StorageService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestWondooController
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class StorageController {
 
     private final StorageService storageService;
