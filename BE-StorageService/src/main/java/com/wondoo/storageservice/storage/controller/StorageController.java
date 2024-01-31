@@ -1,5 +1,6 @@
 package com.wondoo.storageservice.storage.controller;
 
+import com.wondoo.storageservice._global.annotation.RestWondooController;
 import com.wondoo.storageservice._global.data.ApiResponse;
 import com.wondoo.storageservice._global.data.StatusCode;
 import com.wondoo.storageservice.storage.data.request.FileRequest;
@@ -16,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@RestController
-@CrossOrigin("*")
-@RequestMapping("/storage-service")
+@RestWondooController
 @RequiredArgsConstructor
 public class StorageController {
 
