@@ -1,0 +1,37 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  config:
+    activate:
+      on-profile: default
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GITHUB_REPO_URI}
+          default-label: ${GITHUB_BRANCH}
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${SPRING_ACTUATOR_MANAGEMENT}
