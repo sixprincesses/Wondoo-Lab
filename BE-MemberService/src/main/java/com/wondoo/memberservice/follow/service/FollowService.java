@@ -50,23 +50,27 @@ public class FollowService implements FollowSaveService, FollowLoadService {
 
         Member from = checkFrom(socialId);
 
-        followRepository.save(Follow.builder()
-                .to(to)
-                .from(from)
-                .build());
-        to.getStatistic()
-                .followerCalculate(true);
-        from.getStatistic()
-                .followingCalculate(true);
+        try {
+            followRepository.save(Follow.builder()
+                    .to(to)
+                    .from(from)
+                    .build());
+            to.getStatistic()
+                    .followerCalculate(true);
+            from.getStatistic()
+                    .followingCalculate(true);
 
-        kafkaProducer.sendMessage(
-                objectMapper.writeValueAsString(
-                        FollowMessage.builder()
-                                .targetId(to.getSocialId())
-                                .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
-                                .build()
-                )
-        );
+            kafkaProducer.sendMessage(
+                    objectMapper.writeValueAsString(
+                            FollowMessage.builder()
+                                    .targetId(to.getSocialId())
+                                    .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
+                                    .build()
+                    )
+            );
+        } catch (Exception e) {
+            throw new FollowException(FollowErrorCode.FOLLOW_DUPLICATE_REQUEST);
+        }
     }
 
     /**
