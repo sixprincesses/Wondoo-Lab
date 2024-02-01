@@ -1,6 +1,9 @@
 server:
   port: 8000
 
+secret:
+  key: OOyDne2ZnOq0gDbqs7Xso7x3b25kb2/tlITroZzsoJ3tirhf67Cx7JeU65OcOuy1nOykgO2YuCzquYDsoJXsmrEs7Jyk7ISkX+2UhOuhoO2KuOyXlOuTnDrsmKTtnazso7ws6rmA7YOc6recLO2ZqeyjvOyYgQ==
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
