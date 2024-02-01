@@ -33,7 +33,7 @@ public class Member extends BaseEntity {
     private String socialNickname;
 
     @Column(name = "image_id")
-    private Long imageId;
+    private String imageId;
 
     @Pattern(regexp = "^[가-힣A-Za-z][가-힣A-Za-z0-9-]{1,40}$")
     @Column(name = "nickname")
@@ -80,11 +80,12 @@ public class Member extends BaseEntity {
         socialNickname = newSocialNickname;
     }
 
-    public void updateMemberInfo(String newNickname, String newName, String newEmail, String newPhone, String newGender) {
+    public void updateMemberInfo(String newNickname, String newName, String newEmail, String newPhone, String newGender, String newImageId) {
         nickname = (newNickname != null ? newNickname : nickname);
         name = (newName != null ? newName : name);
         email = (newEmail != null ? newEmail : email);
         phone = (newPhone != null ? newPhone : phone);
         gender = (newGender != null ? newGender : gender);
+        imageId = (newImageId != null ? newImageId : imageId);
     }
 }
