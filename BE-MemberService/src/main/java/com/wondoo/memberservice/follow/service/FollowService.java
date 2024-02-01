@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -50,7 +52,8 @@ public class FollowService implements FollowSaveService, FollowLoadService {
 
         Member from = checkFrom(socialId);
 
-        try {
+        Optional<Follow> followChk = followRepository.findByFollow(to.getId(), from.getId());
+        if (followChk.isEmpty()){
             followRepository.save(Follow.builder()
                     .to(to)
                     .from(from)
@@ -63,14 +66,15 @@ public class FollowService implements FollowSaveService, FollowLoadService {
             kafkaProducer.sendMessage(
                     objectMapper.writeValueAsString(
                             FollowMessage.builder()
-                                    .targetId(to.getSocialId())
+                                    .targetId(to.getId())
                                     .content(from.getNickname() + " 님이 회원님을 팔로우했습니다.")
                                     .build()
                     )
             );
-        } catch (Exception e) {
-            throw new FollowException(FollowErrorCode.FOLLOW_DUPLICATE_REQUEST);
+            return;
         }
+        throw new FollowException(FollowErrorCode.FOLLOW_DUPLICATE_REQUEST);
+
     }
 
     /**
