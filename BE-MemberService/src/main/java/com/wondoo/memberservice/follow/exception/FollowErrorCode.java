@@ -7,7 +7,8 @@ import lombok.Getter;
 public enum FollowErrorCode implements ErrorCode {
 
     FOLLOW_NOT_FOUND(400, "Follow_001", "팔로우 한 적이 없는 사용자입니다."),
-    FOLLOW_BAD_REQUEST(400, "Follow_002", "스스로 팔로우 할 수 없습니다.");
+    FOLLOW_DUPLICATE_REQUEST(400, "Follow_002", "중복 팔로우는 불가능합니다."),
+    FOLLOW_BAD_REQUEST(400, "Follow_003", "스스로 팔로우 할 수 없습니다.");
 
     private final int status;
     private final String code;
