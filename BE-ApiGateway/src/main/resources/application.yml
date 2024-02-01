@@ -1,6 +1,10 @@
 server:
   port: 8000
 
+secret:
+  key: ${SECRET_KEY}
+  token: ${TEST_TOKEN}
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
