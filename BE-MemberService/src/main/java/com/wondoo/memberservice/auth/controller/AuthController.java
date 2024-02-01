@@ -2,6 +2,7 @@ package com.wondoo.memberservice.auth.controller;
 
 import com.wondoo.memberservice.auth.data.request.RefreshRelatedRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
+import com.wondoo.memberservice.auth.data.response.TokenResponse;
 import com.wondoo.memberservice.auth.service.AuthService;
 import com.wondoo.memberservice.auth.client.github.GithubClient;
 import com.wondoo.memberservice.auth.client.github.data.response.GithubCodeResponse;
