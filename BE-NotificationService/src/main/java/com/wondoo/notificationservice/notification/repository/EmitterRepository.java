@@ -24,8 +24,8 @@ public class EmitterRepository {
         return new HashMap<>(emitters);
     }
 
-    public Optional<SseEmitter> get(Long socialId) {
-        return Optional.ofNullable(emitters.get(socialId));
+    public Optional<SseEmitter> get(Long memberId) {
+        return Optional.ofNullable(emitters.get(memberId));
     }
 
 

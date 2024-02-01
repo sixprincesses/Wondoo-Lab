@@ -62,24 +62,24 @@ public class NotificationService {
      * SSE 구독 처리
      * 동일 요청 사용자가 받은 마지막 알림 이후 들어왔던 알림이 있다면 구독과 동시에 밀린 알림들 전송
      *
-     * @param socialId 사용자 social_id 당 Emitter 할당
+     * @param memberId 사용자 member_id 당 Emitter 할당
      * @return SSE Emitter
      */
-    public SseEmitter subscribe(Long socialId, String lastMessage) throws JsonProcessingException {
+    public SseEmitter subscribe(Long memberId, String lastMessage) throws JsonProcessingException {
 
-        SseEmitter emitter = emitterRepository.save(socialId, new SseEmitter(3600L * 100));
+        SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(3600L * 100));
         emitter.onCompletion(() -> {
-            emitterRepository.deleteById(socialId);
+            emitterRepository.deleteById(memberId);
         });
         emitter.onTimeout(() -> {
-            emitterRepository.deleteById(socialId);
+            emitterRepository.deleteById(memberId);
         });
-        sendToClient(emitter, socialId, "EventStream Created. [member=" + socialId + "]");
+        sendToClient(emitter, memberId, "EventStream Created. [member=" + memberId + "]");
         if (!lastMessage.equals("empty")) {
-            Set<String> notificationsByTimeRange = getNotificationsByTimeRange(socialId, Long.valueOf(lastMessage));
+            Set<String> notificationsByTimeRange = getNotificationsByTimeRange(memberId, Long.valueOf(lastMessage));
             for (String notification : notificationsByTimeRange) {
                 NotificationCache notificationCache = objectMapper.readValue(notification, NotificationCache.class);
-                sendToClient(emitter, socialId, notificationCache);
+                sendToClient(emitter, memberId, notificationCache);
             }
         }
 
@@ -102,21 +102,21 @@ public class NotificationService {
         });
     }
 
-    private void sendToClient(SseEmitter emitter, Long socialId, Object message) {
+    private void sendToClient(SseEmitter emitter, Long memberId, Object message) {
         try {
             emitter.send(SseEmitter.event()
-                    .id(String.valueOf(socialId))
+                    .id(String.valueOf(memberId))
                     .data(message));
         } catch (IOException e) {
-            emitterRepository.deleteById(socialId);
+            emitterRepository.deleteById(memberId);
         }
     }
 
-    private Set<String> getNotificationsByTimeRange(Long socialId, Long lastMessageTime) {
+    private Set<String> getNotificationsByTimeRange(Long memberId, Long lastMessageTime) {
         long min = lastMessageTime;
         long max = Long.MAX_VALUE;
 
         return redisTemplate.opsForZSet()
-                .rangeByScore(String.valueOf(socialId), min, max);
+                .rangeByScore(String.valueOf(memberId), min, max);
     }
 }
