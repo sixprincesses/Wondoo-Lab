@@ -8,11 +8,16 @@ import com.wondoo.memberservice.member.service.MemberLoadService;
 import com.wondoo.memberservice.member.service.MemberSaveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestWondooController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberLoadService memberLoadService;
@@ -34,10 +39,11 @@ public class MemberController {
     public ResponseEntity<String> memberUpdate(
             @PathVariable("member_id") Long memberId,
             @RequestHeader("social_id") Long socialId,
-            @RequestBody @Valid MemberUpdateRequest memberUpdateRequest
-    ) {
+            @RequestPart("json") @Valid MemberUpdateRequest memberUpdateRequest,
+            @RequestPart("image_id") MultipartFile imageId
+    ) throws IOException {
 
-        memberSaveService.memberUpdate(memberId, socialId, memberUpdateRequest);
+        memberSaveService.memberUpdate(memberId, socialId, memberUpdateRequest, imageId);
         return ResponseEntity.ok("update success");
     }
 }

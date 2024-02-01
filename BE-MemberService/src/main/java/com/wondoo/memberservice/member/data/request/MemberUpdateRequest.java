@@ -7,8 +7,8 @@ import lombok.Builder;
 
 @Builder
 public record MemberUpdateRequest(
-        @Pattern(regexp = "^[가-힣A-Za-z][가-힣A-Za-z0-9]{1,9}$",
-                message = "닉네임은 특수문자를 포함하지 않은 2-10자리이며, " +
+        @Pattern(regexp = "^[가-힣A-Za-z][가-힣A-Za-z0-9-]{1,40}$",
+                message = "닉네임은 특수문자를 포함하지 않은 2-40자리이며, " +
                         "첫글자는 한글 또는 영어로 작성해야 합니다.")
         @JsonProperty("nickname")
         String nickname,
