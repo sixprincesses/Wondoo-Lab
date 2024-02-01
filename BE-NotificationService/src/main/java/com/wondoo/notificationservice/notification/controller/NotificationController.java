@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -19,12 +20,13 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @PostMapping(value = "/notification/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/notification/subscribe/{member_id}/{last_message}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
-            @RequestHeader("social_id") Long socialId,
-            @RequestHeader("last_message") String lastMessage
+            @PathVariable("member_id") Long member_id,
+            @PathVariable("last_message") String lastMessage
     ) throws IOException {
-        return notificationService.subscribe(socialId, lastMessage);
+
+        return notificationService.subscribe(member_id, lastMessage);
     }
 }
 

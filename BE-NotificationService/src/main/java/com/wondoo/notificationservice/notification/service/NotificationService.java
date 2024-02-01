@@ -75,7 +75,7 @@ public class NotificationService {
             emitterRepository.deleteById(socialId);
         });
         sendToClient(emitter, socialId, "EventStream Created. [member=" + socialId + "]");
-        if (!lastMessage.isEmpty()) {
+        if (!lastMessage.equals("empty")) {
             Set<String> notificationsByTimeRange = getNotificationsByTimeRange(socialId, Long.valueOf(lastMessage));
             for (String notification : notificationsByTimeRange) {
                 NotificationCache notificationCache = objectMapper.readValue(notification, NotificationCache.class);
