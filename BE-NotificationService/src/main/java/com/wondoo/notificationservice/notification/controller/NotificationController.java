@@ -24,7 +24,6 @@ public class NotificationController {
             @RequestHeader("social_id") Long socialId,
             @RequestHeader("last_message") String lastMessage
     ) throws IOException {
-        log.info("hi");
         return notificationService.subscribe(socialId, lastMessage);
     }
 }
