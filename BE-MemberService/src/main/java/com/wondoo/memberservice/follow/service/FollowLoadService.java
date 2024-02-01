@@ -1,15 +1,11 @@
-package com.wondoo.memberservice.follow.repository.query;
+package com.wondoo.memberservice.follow.service;
 
 import com.wondoo.memberservice.follow.data.query.FollowsResponse;
-import com.wondoo.memberservice.follow.domain.Follow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
-
-public interface FollowRepositoryCustom {
+public interface FollowLoadService {
 
     Page<FollowsResponse> followersLoad(Long memberId, Pageable pageable);
     Page<FollowsResponse> followingsLoad(Long memberId, Pageable pageable);
-    Optional<Follow> findByFollow(Long toId, Long fromId);
 }
