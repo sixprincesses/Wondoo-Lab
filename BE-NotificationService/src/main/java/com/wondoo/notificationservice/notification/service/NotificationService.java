@@ -1,64 +1,122 @@
 package com.wondoo.notificationservice.notification.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wondoo.notificationservice.notification.data.cache.NotificationCache;
+import com.wondoo.notificationservice.notification.data.message.FollowMessage;
 import com.wondoo.notificationservice.notification.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationService {
 
     private final EmitterRepository emitterRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
+
+    /**
+     * Kafka 토픽마다 이벤트 발생 시 SSE 전송 요청
+     *
+     * @param targetId     SSE 수신할 Emitter key
+     * @param kafkaMessage SSE 수신할 내용
+     */
+    public void kafkaListen(Long targetId, String kafkaMessage) throws JsonProcessingException {
+
+        FollowMessage followMessage = objectMapper.readValue(kafkaMessage, FollowMessage.class);
+        long time = System.currentTimeMillis();
+        NotificationCache notificationCache = NotificationCache.builder()
+                .content(followMessage.content())
+                .time(time)
+                .build();
+        String message = objectMapper.writeValueAsString(notificationCache);
+        // Redis 캐싱용 백업 (하루)
+        redisTemplate.opsForZSet()
+                .add(String.valueOf(targetId),
+                        message,
+                        time);
+        redisTemplate.expire(String.valueOf(targetId), 24, TimeUnit.HOURS);
+
+        Optional<SseEmitter> sseEmitter = emitterRepository.get(targetId);
+        if (sseEmitter.isEmpty()) {
+            return;
+        }
+
+        sendToClient(sseEmitter.get(), targetId, notificationCache);
+    }
 
     /**
      * SSE 구독 처리
+     * 동일 요청 사용자가 받은 마지막 알림 이후 들어왔던 알림이 있다면 구독과 동시에 밀린 알림들 전송
      *
      * @param socialId 사용자 social_id 당 Emitter 할당
      * @return SSE Emitter
      */
-    public SseEmitter subscribe(Long socialId) {
-        SseEmitter emitter = createEmitter(socialId);
+    public SseEmitter subscribe(Long socialId, String lastMessage) throws JsonProcessingException {
 
-        sendToClient(socialId, "EventStream Created. [member=" + socialId + "]");
+        SseEmitter emitter = emitterRepository.save(socialId, new SseEmitter(3600L * 100));
+        emitter.onCompletion(() -> {
+            emitterRepository.deleteById(socialId);
+        });
+        emitter.onTimeout(() -> {
+            emitterRepository.deleteById(socialId);
+        });
+        sendToClient(emitter, socialId, "EventStream Created. [member=" + socialId + "]");
+        if (!lastMessage.isEmpty()) {
+            Set<String> notificationsByTimeRange = getNotificationsByTimeRange(socialId, Long.valueOf(lastMessage));
+            for (String notification : notificationsByTimeRange) {
+                NotificationCache notificationCache = objectMapper.readValue(notification, NotificationCache.class);
+                sendToClient(emitter, socialId, notificationCache);
+            }
+        }
+
         return emitter;
     }
 
     /**
-     * 이벤트에 대한 메시지를 받을 수신자에 맞게 전송
-     *
-     * @param socialId SSE 이벤트 수신자
-     * @param event    SSE 전송 내용
+     * 1분마다 연결 상태 확인
+     * TimeOut 과는 다른 상태 확인 메서드
      */
-    public void notify(Long socialId, Object event) {
-        sendToClient(socialId, event);
+    @Scheduled(fixedRate = 60000)
+    public void sendHeartbeat() {
+        Map<Long, SseEmitter> emitters = emitterRepository.findAllEmitters();
+        emitters.forEach((key, emitter) -> {
+            try {
+                emitter.send(SseEmitter.event().id(String.valueOf(key)).name("heartbeat").data(""));
+            } catch (IOException e) {
+                emitterRepository.deleteById(key);
+            }
+        });
     }
 
-    private void sendToClient(Long socialId, Object data) {
-        SseEmitter emitter = emitterRepository.get(socialId);
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().id(String.valueOf(socialId)).name("sse").data(data));
-            } catch (IOException exception) {
-                emitterRepository.deleteById(socialId);
-                emitter.completeWithError(exception);
-            }
+    private void sendToClient(SseEmitter emitter, Long socialId, Object message) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(String.valueOf(socialId))
+                    .data(message));
+        } catch (IOException e) {
+            emitterRepository.deleteById(socialId);
         }
     }
 
-    private SseEmitter createEmitter(Long socialId) {
+    private Set<String> getNotificationsByTimeRange(Long socialId, Long lastMessageTime) {
+        long min = lastMessageTime;
+        long max = Long.MAX_VALUE;
 
-        SseEmitter emitter = new SseEmitter();
-        emitterRepository.save(socialId, emitter);
-
-        // Emitter가 완료될 때(모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다.
-        emitter.onCompletion(() -> emitterRepository.deleteById(socialId));
-        // Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
-        emitter.onTimeout(() -> emitterRepository.deleteById(socialId));
-
-        return emitter;
+        return redisTemplate.opsForZSet()
+                .rangeByScore(String.valueOf(socialId), min, max);
     }
-
 }

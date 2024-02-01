@@ -4,23 +4,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Repository
 public class EmitterRepository {
 
-    private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
+    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public void save(Long socialId, SseEmitter emitter) {
-        emitterMap.put(socialId, emitter);
+    public SseEmitter save(Long emitterId, SseEmitter sseEmitter) {
+        emitters.put(emitterId,sseEmitter);
+        return sseEmitter;
     }
 
-    public void deleteById(Long socialId) {
-        emitterMap.remove(socialId);
+    public Map<Long, SseEmitter> findAllEmitters() {
+        return new HashMap<>(emitters);
     }
 
-    public SseEmitter get(Long socialId) {
-        return emitterMap.get(socialId);
+    public Optional<SseEmitter> get(Long socialId) {
+        return Optional.ofNullable(emitters.get(socialId));
+    }
+
+
+    public void deleteById(Long emitterId) {
+        emitters.remove(emitterId);
     }
 }
