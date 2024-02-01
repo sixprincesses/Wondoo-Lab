@@ -1,11 +1,12 @@
 package com.wondoo.memberservice.auth.utils;
 
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
-import com.wondoo.memberservice.auth.data.response.LoginTokenResponse;
-import com.wondoo.memberservice.auth.data.response.SignupTokenResponse;
+import com.wondoo.memberservice.auth.data.response.RefreshResponse;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
+import com.wondoo.memberservice.auth.data.response.TokenResponse;
 import com.wondoo.memberservice.auth.domain.RefreshToken;
 import com.wondoo.memberservice.auth.repository.RefreshTokenRepository;
+import com.wondoo.memberservice.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,6 +33,7 @@ public class TokenProvider {
     private long refreshTokenExpiration;
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * JWT 발급 및 Redis 백업
@@ -69,13 +71,13 @@ public class TokenProvider {
                 .build());
 
         if (memberTokenRequest.memberId() != null) {
-            return SignupTokenResponse.builder()
+            return TokenResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .memberId(memberTokenRequest.memberId())
                     .build();
         }
-        return LoginTokenResponse.builder()
+        return RefreshResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

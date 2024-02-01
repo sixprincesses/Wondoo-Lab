@@ -3,6 +3,7 @@ package com.wondoo.memberservice.auth.service;
 import com.wondoo.memberservice.auth.data.request.MemberTokenRequest;
 import com.wondoo.memberservice.auth.data.request.RefreshRelatedRequest;
 import com.wondoo.memberservice.auth.data.response.TokenMarker;
+import com.wondoo.memberservice.auth.data.response.TokenResponse;
 import com.wondoo.memberservice.auth.domain.RefreshToken;
 import com.wondoo.memberservice.auth.exception.AuthErrorCode;
 import com.wondoo.memberservice.auth.exception.AuthException;
@@ -13,7 +14,6 @@ import com.wondoo.memberservice.member.domain.Member;
 import com.wondoo.memberservice.member.domain.Statistic;
 import com.wondoo.memberservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,6 +55,7 @@ public class AuthService {
 
         TokenMarker tokenMarker = tokenProvider.jwtSave(MemberTokenRequest.builder()
                 .socialId(member.getSocialId())
+                .memberId(member.getId())
                 .build());
 
         return ResponseEntity.status(HttpStatus.OK).body(tokenMarker);
