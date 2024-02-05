@@ -1,122 +1,76 @@
 package com.wondoo.notificationservice.notification.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wondoo.notificationservice.notification.data.cache.NotificationCache;
-import com.wondoo.notificationservice.notification.data.message.FollowMessage;
-import com.wondoo.notificationservice.notification.repository.EmitterRepository;
+import com.wondoo.notificationservice.notification.data.response.NotificationResponse;
+import com.wondoo.notificationservice.notification.data.response.NotificationUnreadCountResponse;
+import com.wondoo.notificationservice.notification.domain.Notification;
+import com.wondoo.notificationservice.notification.exception.NotificationErrorCode;
+import com.wondoo.notificationservice.notification.exception.NotificationException;
+import com.wondoo.notificationservice.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationService {
+public class NotificationService implements NotificationSaveService, NotificationLoadService {
 
-    private final EmitterRepository emitterRepository;
-    private final RedisTemplate<String, String> redisTemplate;
-    private final ObjectMapper objectMapper;
+    private final NotificationRepository notificationRepository;
 
     /**
-     * Kafka 토픽마다 이벤트 발생 시 SSE 전송 요청
+     * 페이지네이션 정보 기반 알림 목록 조회
      *
-     * @param targetId     SSE 수신할 Emitter key
-     * @param kafkaMessage SSE 수신할 내용
+     * @param memberId 조회할 기준 member_id
+     * @param pageable 페이지네이션 정보 (page_size, page_offset)
+     * @return Page 정보
      */
-    public void kafkaListen(Long targetId, String kafkaMessage) throws JsonProcessingException {
+    @Override
+    public Page<NotificationResponse> notificationLoad(Long memberId, Pageable pageable) {
 
-        FollowMessage followMessage = objectMapper.readValue(kafkaMessage, FollowMessage.class);
-        long time = System.currentTimeMillis();
-        NotificationCache notificationCache = NotificationCache.builder()
-                .content(followMessage.content())
-                .time(time)
+        return notificationRepository.findByMemberId(memberId, pageable);
+    }
+
+    /**
+     * 단일 알림 읽음 처리
+     * @param memberId member_id
+     * @param notificationId notification_id
+     * @return member_id에 해당하는 알림이면 읽음 처리 후 안읽은 알림 개수 반환
+     */
+    @Override
+    public NotificationUnreadCountResponse notificationRead(Long memberId, String notificationId) {
+
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(
+                        () -> new NotificationException(NotificationErrorCode.NOTIFICATION_NOT_FOUND)
+                );
+        if (notification.getMemberId() != memberId) {
+            throw new NotificationException(NotificationErrorCode.NOTIFICATION_WRONG_ACCESS);
+        }
+        notification.notificationRead();
+        Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(memberId);
+        return NotificationUnreadCountResponse.builder()
+                .unreadCount(unreadCount)
                 .build();
-        String message = objectMapper.writeValueAsString(notificationCache);
-        // Redis 캐싱용 백업 (하루)
-        redisTemplate.opsForZSet()
-                .add(String.valueOf(targetId),
-                        message,
-                        time);
-        redisTemplate.expire(String.valueOf(targetId), 24, TimeUnit.HOURS);
-
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(targetId);
-        if (sseEmitter.isEmpty()) {
-            return;
-        }
-
-        sendToClient(sseEmitter.get(), targetId, notificationCache);
     }
 
     /**
-     * SSE 구독 처리
-     * 동일 요청 사용자가 받은 마지막 알림 이후 들어왔던 알림이 있다면 구독과 동시에 밀린 알림들 전송
-     *
-     * @param memberId 사용자 member_id 당 Emitter 할당
-     * @return SSE Emitter
+     * 요청자 알림 모두 읽음 처리
+     * @param memberId member_id
+     * @return 모두 읽음 처리 후 안읽은 알림 개수 반환
      */
-    public SseEmitter subscribe(Long memberId, String lastMessage) throws JsonProcessingException {
+    @Override
+    public NotificationUnreadCountResponse notificationReadAll(Long memberId) {
 
-        SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(3600L * 100));
-        emitter.onCompletion(() -> {
-            emitterRepository.deleteById(memberId);
-        });
-        emitter.onTimeout(() -> {
-            emitterRepository.deleteById(memberId);
-        });
-        sendToClient(emitter, memberId, "EventStream Created. [member=" + memberId + "]");
-        if (!lastMessage.equals("empty")) {
-            Set<String> notificationsByTimeRange = getNotificationsByTimeRange(memberId, Long.valueOf(lastMessage));
-            for (String notification : notificationsByTimeRange) {
-                NotificationCache notificationCache = objectMapper.readValue(notification, NotificationCache.class);
-                sendToClient(emitter, memberId, notificationCache);
-            }
+        List<Notification> notifications = notificationRepository.findByMemberId(memberId);
+        for (Notification notification : notifications) {
+            notification.notificationRead();
         }
-
-        return emitter;
-    }
-
-    /**
-     * 1분마다 연결 상태 확인
-     * TimeOut 과는 다른 상태 확인 메서드
-     */
-    @Scheduled(fixedRate = 60000)
-    public void sendHeartbeat() {
-        Map<Long, SseEmitter> emitters = emitterRepository.findAllEmitters();
-        emitters.forEach((key, emitter) -> {
-            try {
-                emitter.send(SseEmitter.event().id(String.valueOf(key)).name("heartbeat").data(""));
-            } catch (IOException e) {
-                emitterRepository.deleteById(key);
-            }
-        });
-    }
-
-    private void sendToClient(SseEmitter emitter, Long memberId, Object message) {
-        try {
-            emitter.send(SseEmitter.event()
-                    .id(String.valueOf(memberId))
-                    .data(message));
-        } catch (IOException e) {
-            emitterRepository.deleteById(memberId);
-        }
-    }
-
-    private Set<String> getNotificationsByTimeRange(Long memberId, Long lastMessageTime) {
-        long min = lastMessageTime;
-        long max = Long.MAX_VALUE;
-
-        return redisTemplate.opsForZSet()
-                .rangeByScore(String.valueOf(memberId), min, max);
+        return NotificationUnreadCountResponse.builder()
+                .unreadCount(0L)
+                .build();
     }
 }
