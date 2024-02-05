@@ -36,4 +36,8 @@ public class Notification {
         this.content = content;
         this.time = time;
     }
+
+    public void notificationRead() {
+        this.read = true;
+    }
 }
