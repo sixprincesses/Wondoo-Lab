@@ -1,6 +1,7 @@
 package com.wondoo.notificationservice.notification.service;
 
 import com.wondoo.notificationservice.notification.data.message.Event;
+import com.wondoo.notificationservice.notification.data.response.NotificationUnreadCountResponse;
 import com.wondoo.notificationservice.notification.domain.Notification;
 import com.wondoo.notificationservice.notification.repository.EmitterRepository;
 import com.wondoo.notificationservice.notification.repository.NotificationRepository;
@@ -26,7 +27,7 @@ public class EmitterService {
      * Kafka 토픽마다 이벤트 발생 시 SSE 전송 요청
      * 메시지 DB에 백업
      *
-     * @param event     SSE 수신할 Emitter key
+     * @param event SSE 수신할 Emitter key
      */
     public void kafkaListen(Event event) {
 
@@ -42,11 +43,15 @@ public class EmitterService {
                         .build()
         );
 
+        Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(event.targetId());
+
         sseEmitter.ifPresent(
                 emitter -> sendToClient(
                         emitter,
                         event.targetId(),
-                        notificationRepository.countUnreadNotificationsByMemberId(event.targetId())
+                        NotificationUnreadCountResponse.builder()
+                                .unreadCount(unreadCount)
+                                .build()
                 )
         );
     }
@@ -68,11 +73,15 @@ public class EmitterService {
             emitterRepository.deleteById(memberId);
         });
 
+        Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(memberId);
+
         sendToClient(
                 emitter,
                 memberId,
-                notificationRepository.countUnreadNotificationsByMemberId(memberId)
-        );
+                NotificationUnreadCountResponse.builder()
+                        .unreadCount(unreadCount)
+                        .build()
+                );
 
         return emitter;
     }
