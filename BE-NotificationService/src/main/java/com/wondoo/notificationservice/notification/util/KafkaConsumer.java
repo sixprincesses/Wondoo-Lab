@@ -21,6 +21,7 @@ public class KafkaConsumer {
     public void consumeMessage(String kafkaEvent) throws JsonProcessingException {
         log.info("Message : [{}]", kafkaEvent);
         Event event = objectMapper.readValue(kafkaEvent, Event.class);
+        log.info("Event : [{}]", event);
         emitterService.kafkaListen(event);
     }
 }
