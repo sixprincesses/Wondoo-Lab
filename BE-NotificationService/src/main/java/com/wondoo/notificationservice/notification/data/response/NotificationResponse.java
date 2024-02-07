@@ -5,6 +5,10 @@ import lombok.Builder;
 
 @Builder
 public record NotificationResponse(
+        @JsonProperty("id")
+        String id,
+        @JsonProperty("target_id")
+        Long targetId,
         @JsonProperty("type")
         String type,
         @JsonProperty("read")

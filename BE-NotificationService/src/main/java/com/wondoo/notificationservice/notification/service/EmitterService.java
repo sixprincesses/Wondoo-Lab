@@ -1,6 +1,7 @@
 package com.wondoo.notificationservice.notification.service;
 
 import com.wondoo.notificationservice.notification.data.message.Event;
+import com.wondoo.notificationservice.notification.data.response.HeartBeat;
 import com.wondoo.notificationservice.notification.data.response.NotificationUnreadCountResponse;
 import com.wondoo.notificationservice.notification.domain.Notification;
 import com.wondoo.notificationservice.notification.repository.EmitterRepository;
@@ -33,7 +34,7 @@ public class EmitterService {
 
         Optional<SseEmitter> sseEmitter = emitterRepository.get(event.targetId());
 
-        notificationRepository.save(
+        Notification notification = notificationRepository.save(
                 Notification.builder()
                         .memberId(event.targetId())
                         .type(event.type())
@@ -50,6 +51,12 @@ public class EmitterService {
                         emitter,
                         event.targetId(),
                         NotificationUnreadCountResponse.builder()
+                                .id(notification.getId())
+                                .targetId(notification.getMemberId())
+                                .read(notification.getRead())
+                                .type(notification.getType())
+                                .content(notification.getContent())
+                                .time(notification.getTime())
                                 .unreadCount(unreadCount)
                                 .build()
                 )
@@ -81,7 +88,7 @@ public class EmitterService {
                 NotificationUnreadCountResponse.builder()
                         .unreadCount(unreadCount)
                         .build()
-                );
+        );
 
         return emitter;
     }
@@ -90,12 +97,18 @@ public class EmitterService {
      * 1분마다 연결 상태 확인
      * TimeOut 과는 다른 상태 확인 메서드
      */
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 6000)
     public void sendHeartbeat() {
         Map<Long, SseEmitter> emitters = emitterRepository.findAllEmitters();
         emitters.forEach((key, emitter) -> {
             try {
-                emitter.send(SseEmitter.event().id(String.valueOf(key)).name("heartbeat").data(""));
+                emitter.send(emitter.event()
+                        .id(String.valueOf(key))
+                        .data(
+                                HeartBeat.builder()
+                                        .time(System.currentTimeMillis())
+                                        .build()
+                        ));
             } catch (IOException e) {
                 emitterRepository.deleteById(key);
             }

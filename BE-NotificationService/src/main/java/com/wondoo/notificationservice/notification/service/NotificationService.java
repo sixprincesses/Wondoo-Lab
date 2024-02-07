@@ -51,7 +51,9 @@ public class NotificationService implements NotificationSaveService, Notificatio
             throw new NotificationException(NotificationErrorCode.NOTIFICATION_WRONG_ACCESS);
         }
         notification.notificationRead();
+        notificationRepository.save(notification);
         Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(memberId);
+
         return NotificationUnreadCountResponse.builder()
                 .unreadCount(unreadCount)
                 .build();
@@ -68,6 +70,7 @@ public class NotificationService implements NotificationSaveService, Notificatio
         List<Notification> notifications = notificationRepository.findByMemberId(memberId);
         for (Notification notification : notifications) {
             notification.notificationRead();
+            notificationRepository.save(notification);
         }
         return NotificationUnreadCountResponse.builder()
                 .unreadCount(0L)
