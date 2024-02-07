@@ -3,6 +3,7 @@ package com.wondoo.notificationservice.notification.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wondoo.notificationservice.notification.data.message.Event;
+import com.wondoo.notificationservice.notification.data.message.FollowEvent;
 import com.wondoo.notificationservice.notification.service.EmitterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${message.topic.name}", groupId = "member", containerFactory = "kafkaListener")
     public void consumeMessage(String kafkaEvent) throws JsonProcessingException {
 
-        Event event = objectMapper.readValue(kafkaEvent, Event.class);
+        Event event = objectMapper.readValue(kafkaEvent, FollowEvent.class);
         emitterService.kafkaListen(event);
     }
 }

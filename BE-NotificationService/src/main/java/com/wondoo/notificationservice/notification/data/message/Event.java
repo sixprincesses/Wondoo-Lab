@@ -1,15 +1,14 @@
 package com.wondoo.notificationservice.notification.data.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import lombok.Getter;
 
-@Builder
-public record Event(
-        @JsonProperty("target_id")
-        Long targetId,
-        @JsonProperty("type")
-        String type,
-        @JsonProperty("content")
-        String content
-) {
+@Getter
+public abstract class Event {
+
+    @JsonProperty("target_id")
+    protected Long targetId;
+
+    @JsonProperty("type")
+    protected String type;
 }

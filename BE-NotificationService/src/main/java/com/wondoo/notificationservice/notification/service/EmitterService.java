@@ -32,30 +32,29 @@ public class EmitterService {
      */
     public void kafkaListen(Event event) {
 
-        Optional<SseEmitter> sseEmitter = emitterRepository.get(event.targetId());
+        Optional<SseEmitter> sseEmitter = emitterRepository.get(event.getTargetId());
 
         Notification notification = notificationRepository.save(
                 Notification.builder()
-                        .memberId(event.targetId())
-                        .type(event.type())
+                        .memberId(event.getTargetId())
+                        .type(event.getType())
+                        .event(event)
                         .read(false)
                         .time(System.currentTimeMillis())
-                        .content(event.content())
                         .build()
         );
 
-        Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(event.targetId());
+        Long unreadCount = notificationRepository.countUnreadNotificationsByMemberId(event.getTargetId());
 
         sseEmitter.ifPresent(
                 emitter -> sendToClient(
                         emitter,
-                        event.targetId(),
+                        event.getTargetId(),
                         NotificationUnreadCountResponse.builder()
                                 .id(notification.getId())
-                                .targetId(notification.getMemberId())
-                                .read(notification.getRead())
                                 .type(notification.getType())
-                                .content(notification.getContent())
+                                .event(event)
+                                .read(notification.getRead())
                                 .time(notification.getTime())
                                 .unreadCount(unreadCount)
                                 .build()

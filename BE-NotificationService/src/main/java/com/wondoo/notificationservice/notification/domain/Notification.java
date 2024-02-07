@@ -1,5 +1,6 @@
 package com.wondoo.notificationservice.notification.domain;
 
+import com.wondoo.notificationservice.notification.data.message.Event;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,21 +20,21 @@ public class Notification {
     @Field("type")
     private String type;
 
+    @Field("message")
+    private Event event;
+
     @Field("read")
     private Boolean read;
-
-    @Field("content")
-    private String content;
 
     @Field("time")
     private Long time;
 
     @Builder
-    public Notification(Long memberId, String type, Boolean read, String content, Long time) {
+    public Notification(Long memberId, String type, Event event, Boolean read, Long time) {
         this.memberId = memberId;
         this.type = type;
+        this.event = event;
         this.read = read;
-        this.content = content;
         this.time = time;
     }
 

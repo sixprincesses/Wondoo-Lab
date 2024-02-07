@@ -47,7 +47,7 @@ public class NotificationService implements NotificationSaveService, Notificatio
                 .orElseThrow(
                         () -> new NotificationException(NotificationErrorCode.NOTIFICATION_NOT_FOUND)
                 );
-        if (notification.getMemberId() != memberId) {
+        if (notification.getEvent().getTargetId() != memberId) {
             throw new NotificationException(NotificationErrorCode.NOTIFICATION_WRONG_ACCESS);
         }
         notification.notificationRead();
