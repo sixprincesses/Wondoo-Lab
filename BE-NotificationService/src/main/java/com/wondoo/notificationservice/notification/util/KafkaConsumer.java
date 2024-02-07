@@ -19,7 +19,7 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "${message.topic.name}", groupId = "member", containerFactory = "kafkaListener")
     public void consumeMessage(String kafkaEvent) throws JsonProcessingException {
-
+        log.info("Message : [{}]", kafkaEvent);
         Event event = objectMapper.readValue(kafkaEvent, Event.class);
         emitterService.kafkaListen(event);
     }
