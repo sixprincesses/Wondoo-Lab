@@ -26,13 +26,12 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${message.topic.name}", groupId = "member", containerFactory = "kafkaListener")
     public void consumeMessage(@Payload String kafkaEvent, @Header(KafkaHeaders.RECEIVED_KEY) String key) throws JsonProcessingException {
 
-        switch (key) {
-            case "follow":
-                Event event = objectMapper.readValue(kafkaEvent, FollowEvent.class);
-                emitterService.kafkaListen(key, event);
-                break;
-            default:
-                throw new NotificationException(NotificationErrorCode.NOTIFICATION_WRONG_ACCESS);
+        if (key.equals("follow")) {
+            Event event = objectMapper.readValue(kafkaEvent, FollowEvent.class);
+            emitterService.kafkaListen(key, event);
+            return;
         }
+
+        throw new NotificationException(NotificationErrorCode.NOTIFICATION_WRONG_ACCESS);
     }
 }
