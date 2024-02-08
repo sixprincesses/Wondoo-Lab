@@ -30,14 +30,14 @@ public class EmitterService {
      *
      * @param event SSE 수신할 Emitter key
      */
-    public void kafkaListen(Event event) {
+    public void kafkaListen(String key, Event event) {
 
         Optional<SseEmitter> sseEmitter = emitterRepository.get(event.getTargetId());
 
         Notification notification = notificationRepository.save(
                 Notification.builder()
                         .memberId(event.getTargetId())
-                        .type(event.getType())
+                        .type(key)
                         .event(event)
                         .read(false)
                         .time(System.currentTimeMillis())
@@ -53,7 +53,7 @@ public class EmitterService {
                         NotificationUnreadCountResponse.builder()
                                 .id(notification.getId())
                                 .type(notification.getType())
-                                .event(event)
+                                .event(notification.getEvent())
                                 .read(notification.getRead())
                                 .time(notification.getTime())
                                 .unreadCount(unreadCount)

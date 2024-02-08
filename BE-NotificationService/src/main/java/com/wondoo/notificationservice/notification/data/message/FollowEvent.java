@@ -7,16 +7,15 @@ import lombok.Getter;
 @Getter
 public class FollowEvent extends Event{
 
-    @JsonProperty("from_id")
-    private Long fromId;
-    @JsonProperty("from_nickname")
-    private String fromNickname;
+    @JsonProperty("url")
+    private Long url;
+    @JsonProperty("content")
+    private String content;
 
     @Builder
-    public FollowEvent(Long targetId, String type, Long fromId, String fromNickname) {
+    public FollowEvent(Long targetId, Long url, String content) {
         this.targetId = targetId;
-        this.type = type;
-        this.fromId = fromId;
-        this.fromNickname = fromNickname;
+        this.url = url;
+        this.content = content;
     }
 }

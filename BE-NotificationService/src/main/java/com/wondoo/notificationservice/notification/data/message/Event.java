@@ -8,7 +8,4 @@ public abstract class Event {
 
     @JsonProperty("target_id")
     protected Long targetId;
-
-    @JsonProperty("type")
-    protected String type;
 }

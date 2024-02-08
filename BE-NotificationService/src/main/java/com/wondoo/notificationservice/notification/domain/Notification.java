@@ -20,7 +20,7 @@ public class Notification {
     @Field("type")
     private String type;
 
-    @Field("message")
+    @Field("event")
     private Event event;
 
     @Field("read")

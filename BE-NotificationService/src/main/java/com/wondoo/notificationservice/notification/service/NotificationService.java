@@ -36,7 +36,8 @@ public class NotificationService implements NotificationSaveService, Notificatio
 
     /**
      * 단일 알림 읽음 처리
-     * @param memberId member_id
+     *
+     * @param memberId       member_id
      * @param notificationId notification_id
      * @return member_id에 해당하는 알림이면 읽음 처리 후 안읽은 알림 개수 반환
      */
@@ -61,6 +62,7 @@ public class NotificationService implements NotificationSaveService, Notificatio
 
     /**
      * 요청자 알림 모두 읽음 처리
+     *
      * @param memberId member_id
      * @return 모두 읽음 처리 후 안읽은 알림 개수 반환
      */
@@ -68,10 +70,12 @@ public class NotificationService implements NotificationSaveService, Notificatio
     public NotificationUnreadCountResponse notificationReadAll(Long memberId) {
 
         List<Notification> notifications = notificationRepository.findByMemberId(memberId);
-        for (Notification notification : notifications) {
+
+        notifications.forEach(notification -> {
             notification.notificationRead();
             notificationRepository.save(notification);
-        }
+        });
+
         return NotificationUnreadCountResponse.builder()
                 .unreadCount(0L)
                 .build();
