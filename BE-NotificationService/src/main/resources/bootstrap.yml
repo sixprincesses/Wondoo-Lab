@@ -1,5 +1,0 @@
-spring:
-  cloud:
-    config:
-      name: notification-service
-      uri: ${DEV_CONFIG_SERVER}
