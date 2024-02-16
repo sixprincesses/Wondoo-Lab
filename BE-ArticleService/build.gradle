@@ -1,0 +1,92 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.wondoo'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2023.0.0")
+}
+
+dependencies {
+    /* Spring */
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    /* Database */
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    /* Kafka */
+    implementation 'org.springframework.kafka:spring-kafka'
+    /* QueryDSL */
+    implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    /* Swagger */
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    /* Spring Cloud */
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    /* Spring Cloud Config */
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+    /* Logging */
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+    /* Test */
+    runtimeOnly 'com.h2database:h2'
+    testImplementation "org.mockito:mockito-core"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.12.2'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+/* QueryDSL Start */
+def querydslDir = "$buildDir/generated/querydsl"
+
+sourceSets {
+    main.java.srcDirs += [querydslDir]
+}
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
+}
+/* QueryDSL End */
+
+/* Spring Cloud Start */
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+/* Spring Cloud End */

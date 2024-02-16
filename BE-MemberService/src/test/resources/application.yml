@@ -1,0 +1,44 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  cors:
+    allowed-origins: "*"
+    allowed-github: "https://github.com"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+
+github:
+  client_id: d40074277e4a502daa2e
+  client_secret: 098ece07a796f4082d7454870cf327ad50b2017a
+
+openai-token: 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
+
+jwt:
+  token:
+    secret: test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test-test
+    access:
+      expiration: 300000
+    refresh:
+      expiration: 604800000
+
+message:
+  topic:
+    notification:
+      name: local-updateinfo
+    info:
+      name: local-info
+
+kafka:
+  topic:
+    article:
+      updateinfo: test-article-updateinfo
+    member:
+      noti: test-member-noti
+      updateinfo: test-member-updateinfo
+    notification:
+      noti: test-notification-noti

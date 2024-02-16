@@ -1,0 +1,32 @@
+server:
+  port: 8081
+spring:
+  cors:
+    allowed-origins: "*"
+    allowed-github: "https://github.com"
+  server:
+    servlet:
+      encoding:
+        force-response: true
+  output:
+    ansi:
+      enabled: always
+  kafka:
+    bootstrap-servers: localhost:9092
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${DATABASE}
+
+message:
+  topic:
+    name: ${TOPIC_NAME}
+    group-id: notification
+
+kafka:
+  topic:
+    notification:
+      noti: ${TOPIC_NAME}
+  group:
+    noti: notification

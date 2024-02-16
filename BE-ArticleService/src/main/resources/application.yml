@@ -1,0 +1,43 @@
+# Server Setting
+server:
+  port: 8080
+
+kafka:
+  topic:
+    notification:
+      noti: notification
+    member:
+      point: member-point
+      updateinfo: member-updateinfo
+    article:
+      updateinfo: article-updateinfo
+  group:
+    member: member-updateinfo
+
+spring:
+  # KAFKA
+  kafka:
+    bootstrap-servers: localhost:9092
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  # MySQL
+  cors:
+    allowed-origins: "*"
+    allowed-github: "https://github.com"
+  datasource:
+    url: jdbc:mysql://localhost:3306/${SCHEMA}?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: ${USERNAME}
+    password: ${PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # MongoDB
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${DATABASE}
+
+github:
+  apiurl: https://api.github.com
+  token: ${GITHUB_TOKEN}

@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  # MySQL
+  datasource:
+    url: jdbc:mysql://localhost:3306/message?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        format_sql: true
+
+  # Swagger
+  mvc:
+  pathmatch:
+    matching-strategy: ant_path_matcher
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: TRACE

@@ -1,0 +1,65 @@
+server:
+  port: 8000
+  cors:
+    allowed-origins: "*"
+
+spring:
+  application:
+    name: api-gateway
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: root
+    password: 1234
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Origin
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: "*"
+#            allow-credentials: true
+#            allowedHeaders:
+#              - x-requested-with
+#              - authorization
+#              - content-type
+#              - credential
+#              - X-AUTH-TOKEN
+#              - X-CSRF-TOKEN
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - OPTIONS
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: b3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+secret:
+  key: ${JWT_SECRET_KEY}
+
+test:
+  id: ${JWT_TEST_ID}
+  token: ${JWT_TEST_TOKEN}

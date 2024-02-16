@@ -1,0 +1,60 @@
+spring:
+#  config:
+#    activate:
+#      on-profile: local
+  cors:
+    allowed-origins: "*"
+    allowed-github: "https://github.com"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    mongodb:
+      host: localhost
+      port: 27017
+      database: ${DATABASE}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/${SCHEMA}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${USERNAME}
+    password: ${PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+
+kafka:
+  topic:
+    notification:
+      noti: notification
+    member:
+      point: member-point
+      updateinfo: member-updateinfo
+      diary: member-diary
+    article:
+      updateinfo: article-updateinfo
+  group:
+    member: member
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+github:
+  client_id: ${CLIENT_ID}
+  client_secret: ${CLIENT_SECRET}
+  token: ${GITHUB_TOKEN}
+
+openai-token: ${OPENAI_TOKEN}
+
+jwt:
+  token:
+    secret: ${SECRET_KEY}
+    access:
+      expiration: 3000
+    refresh:
+      expiration: 604800000

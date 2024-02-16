@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  cors:
+    allowed-origins: "*"
+    allowed-github: "https://github.com"
+  kafka:
+    bootstrap-servers: localhost:9092
+
+github:
+  apiurl: https://api.github.com
+  token: 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
+
+kafka:
+  topic:
+    article:
+      updateinfo: test-article-updateinfo
+    member:
+      noti: test-member-noti
+      updateinfo: test-member-updateinfo
+    notification:
+      noti: test-notification-noti

@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      name: article-service
+      uri: ${DEV_CONFIG_SERVER}

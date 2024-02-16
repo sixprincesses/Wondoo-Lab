@@ -1,0 +1,69 @@
+server:
+  port: ${API_GATEWAY_PROD_PORT}
+  cors:
+    allowed-origins: ${ALLOW_ORIGINS}
+
+spring:
+  application:
+    name: api-gateway
+  rabbitmq:
+    host: ${RABBITMQ_PROD_IP_ADDRESS}
+    port: ${RABBITMQ_PROD_PORT}
+    username: ${RABBITMQ_PROD_USERNAME}
+    password: ${RABBITMQ_PROD_PASSWORD}
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Origin
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: ${ALLOW_ORIGINS}
+#            allow-credentials: true
+#            allowedHeaders:
+#              - x-requested-with
+#              - authorization
+#              - content-type
+#              - credential
+#              - X-AUTH-TOKEN
+#              - X-CSRF-TOKEN
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#              - OPTIONS
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_PROD_SERVER_IP_ADDRESS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${SPRING_ACTUATOR_MANAGEMENT}
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: b3
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_DEV_API_ENDPOINT}
+
+logging:
+  pattern:
+    level: "%5p [%X{traceId:-},%X{spanId:-}]"
+
+secret:
+  key: ${JWT_SECRET_KEY}
+
+test:
+  id: ${JWT_TEST_ID}
+  token: ${JWT_TEST_TOKEN}

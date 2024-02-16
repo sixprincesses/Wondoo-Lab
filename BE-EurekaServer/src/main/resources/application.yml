@@ -1,0 +1,53 @@
+server:
+  port: 8761
+
+spring:
+  config:
+    activate:
+      on-profile: default
+
+eureka:
+  instance:
+    instance-id: localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${eureka.instance.instance-id}:${server.port}/eureka
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+server:
+  port: ${EUREKA_SERVER_DEV_PORT}
+
+eureka:
+  instance:
+    instance-id: ${EUREKA_DEV_INSTANCE_ID}
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: ${EUREKA_DEV_INSTANCE_ID}/eureka/
+#      defaultZone: http://${EUREKA_DEV_INSTANCE_ID}:${EUREKA_SERVER_DEV_PORT}/eureka/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  port: ${EUREKA_SERVER_PROD_PORT}
+
+eureka:
+  instance:
+    instance-id: ${EUREKA_PROD_INSTANCE_ID}
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${EUREKA_PROD_INSTANCE_ID}:${EUREKA_SERVER_PROD_PORT}/eureka/

@@ -1,0 +1,58 @@
+server:
+  port: ${API_GATEWAY_DEV_PORT}
+  cors:
+    allowed-origins: ${ALLOW_ORIGINS}
+
+spring:
+  application:
+    name: api-gateway
+  rabbitmq:
+    host: ${RABBITMQ_DEV_IP_ADDRESS}
+    port: ${RABBITMQ_DEV_PORT}
+    username: ${RABBITMQ_DEV_USERNAME}
+    password: ${RABBITMQ_DEV_PASSWORD}
+#  cloud:
+#    gateway:
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: "https://fe.wondoo.kr,https://github.com"
+#            #            allow-credentials: true
+#            allowedHeaders: "*"
+#            allowedMethods: "*"
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_DEV_SERVER_IP_ADDRESS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${SPRING_ACTUATOR_MANAGEMENT}
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: b3
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_DEV_API_ENDPOINT}
+
+logging:
+  pattern:
+    level: "%5p [%X{traceId:-},%X{spanId:-}]"
+
+secret:
+  key: ${JWT_SECRET_KEY}
+
+test:
+  id: ${JWT_TEST_ID}
+  token: ${JWT_TEST_TOKEN}
