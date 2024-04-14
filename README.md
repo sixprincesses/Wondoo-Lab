@@ -109,7 +109,7 @@
 
 ## 6. 설계 문서
 
-![Infra](./images/Wondoo-Infra.png)
+![306949453-68fe6793-739f-435c-845c-f9129e4a28e6 (1)](https://github.com/sixprincesses/Wondoo-Lab/assets/74192619/febfebc9-ab47-4846-b06f-fa1fba3a1e02)
 
 ## 7. 팀원 소개
 
